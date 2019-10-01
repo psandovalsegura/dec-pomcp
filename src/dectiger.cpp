@@ -4,7 +4,7 @@
 using namespace std;
 using namespace UTILS;
 
-DECTIGER::DECTIGER()
+DECTIGER::DECTIGER(int numMachines)
 :   ObsProb(0.85)
 {
 	NumActions = 3;

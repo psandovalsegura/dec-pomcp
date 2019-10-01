@@ -17,7 +17,7 @@ class DECTIGER : public SIMULATOR
 {
 public:
 
-    DECTIGER();
+    DECTIGER(int numMachines);
 
     virtual STATE* Copy(const STATE& state) const;
     virtual void Validate(const STATE& state) const;

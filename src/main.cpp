@@ -4,6 +4,7 @@
 #include "pocman.h"
 #include "rocksample.h"
 #include "tag.h"
+#include "dectiger.h"
 #include "experiment.h"
 #include <boost/program_options.hpp>
 
@@ -121,6 +122,10 @@ int main(int argc, char* argv[])
     {
         real = new TAG(number);
         simulator = new TAG(number);
+    }
+    else if (problem == "dectiger") {
+        real = new DECTIGER(0);
+        simulator = new DECTIGER(0);
     }
     else 
     {

@@ -226,7 +226,8 @@ pomcp-main.o: main.cpp battleship.h simulator.h history.h \
   /Library/Developer/CommandLineTools/usr/include/c++/v1/iostream \
   /Library/Developer/CommandLineTools/usr/include/c++/v1/istream grid.h \
   /Library/Developer/CommandLineTools/usr/include/c++/v1/list mcts.h \
-  statistic.h network.h pocman.h rocksample.h tag.h experiment.h \
+  statistic.h network.h pocman.h rocksample.h tag.h dectiger.h \
+  experiment.h \
   /Library/Developer/CommandLineTools/usr/include/c++/v1/fstream \
   /usr/local/include/boost/program_options.hpp \
   /usr/local/include/boost/program_options/options_description.hpp \
@@ -1371,6 +1372,8 @@ pocman.h:
 rocksample.h:
 
 tag.h:
+
+dectiger.h:
 
 experiment.h:
 
