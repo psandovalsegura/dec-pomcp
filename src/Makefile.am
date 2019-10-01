@@ -1,6 +1,7 @@
 bin_PROGRAMS = pomcp
 
 pomcp_SOURCES = \
+dectiger.cpp \
 battleship.cpp \
 beliefstate.cpp \
 coord.cpp \
@@ -17,6 +18,7 @@ testsimulator.cpp \
 utils.cpp
 
 noinst_HEADERS = \
+dectiger.h \
 battleship.h \
 beliefstate.h \
 coord.h \
