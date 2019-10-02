@@ -9,7 +9,7 @@ EXPERIMENT::PARAMS::PARAMS()
     SimSteps(1000),
     TimeOut(3600),
     MinDoubles(0),
-    MaxDoubles(20),
+    MaxDoubles(8), // Orignially 20
     TransformDoubles(-4),
     TransformAttempts(1000),
     Accuracy(0.01),
