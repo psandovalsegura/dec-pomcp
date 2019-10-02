@@ -1,0 +1,6 @@
+# autoconf
+autom4te.cache/
+
+# object files
+*.o
+*.Po

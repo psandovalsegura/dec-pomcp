@@ -33,8 +33,8 @@ public:
     virtual void DisplayAction(int action, std::ostream& ostr) const;
 
 private:
-    
-    mutable MEMORY_POOL<NETWORK_STATE> MemoryPool;
+    double ObsProb;
+    mutable MEMORY_POOL<DECTIGER_STATE> MemoryPool;
 };
 
 #endif // DECTIGER_H

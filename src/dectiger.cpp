@@ -48,7 +48,7 @@ bool DECTIGER::Step(STATE& state, int action,
     observation = Bernoulli(ObsProb);
 
     // TODO
-    if (nstate->SL) {
+    if (nstate.SL) {
     	if (action == 0) {
     		reward = -50;
     	} else if (action == 1) {
@@ -69,18 +69,18 @@ bool DECTIGER::Step(STATE& state, int action,
     return false;
 }
 
-void NETWORK::DisplayBeliefs(const BELIEF_STATE& beliefState, 
+void DECTIGER::DisplayBeliefs(const BELIEF_STATE& beliefState, 
     std::ostream& ostr) const
 {
 }
 
-void NETWORK::DisplayState(const STATE& state, std::ostream& ostr) const
+void DECTIGER::DisplayState(const STATE& state, std::ostream& ostr) const
 {
     const DECTIGER_STATE& nstate = safe_cast<const DECTIGER_STATE&>(state);
     ostr << (nstate.SL ? "Tiger behind left" : "Tiger behind right") << endl;
 }
 
-void NETWORK::DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const
+void DECTIGER::DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const
 {
     switch (observation)
     {
@@ -93,7 +93,7 @@ void NETWORK::DisplayObservation(const STATE& state, int observation, std::ostre
     }
 }
 
-void NETWORK::DisplayAction(int action, std::ostream& ostr) const
+void DECTIGER::DisplayAction(int action, std::ostream& ostr) const
 {
     switch (action)
     {
