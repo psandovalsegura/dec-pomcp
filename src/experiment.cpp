@@ -37,7 +37,7 @@ EXPERIMENT::EXPERIMENT(const SIMULATOR& real,
     MCTS::InitFastUCB(SearchParams.ExplorationConstant);
 }
 
-void EXPERIMENT::Run()
+void EXPERIMENT::Run(int n)
 {
     boost::timer timer;
 
@@ -132,6 +132,11 @@ void EXPERIMENT::Run()
     Results.Time.Add(timer.elapsed());
     Results.UndiscountedReturn.Add(undiscountedReturn);
     Results.DiscountedReturn.Add(discountedReturn);
+    if (n % 500 == 0) {
+        cout << "Action/Observation History:" << endl;
+        HISTORY history = mcts.GetHistory();
+        history.Display(cout);
+    }
     // cout << "Discounted return = " << discountedReturn
     //     << ", average = " << Results.DiscountedReturn.GetMean() << endl;
     // cout << "Undiscounted return = " << undiscountedReturn
@@ -144,7 +149,7 @@ void EXPERIMENT::MultiRun()
             << SearchParams.NumSimulations << " simulations... " << endl;
     for (int n = 0; n < ExpParams.NumRuns; n++)
     {
-        Run();
+        Run(n);
         if (Results.Time.GetTotal() > ExpParams.TimeOut)
         {
             cout << "Timed out after " << n << " runs in "
@@ -213,7 +218,7 @@ void EXPERIMENT::AverageReward()
         SearchParams.MaxAttempts = SearchParams.NumTransforms * ExpParams.TransformAttempts;
 
         Results.Clear();
-        Run();
+        Run(i);
 
         cout << "Simulations = " << SearchParams.NumSimulations << endl
             << "Steps = " << Results.Reward.GetCount() << endl

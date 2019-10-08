@@ -89,6 +89,7 @@ public:
             if (History[t].Observation >= 0)
                 ostr << "o=" << History[t].Observation << " ";
         }
+        ostr << std::endl;
     }
 
 

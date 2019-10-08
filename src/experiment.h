@@ -52,7 +52,7 @@ public:
         const std::string& outputFile, 
         EXPERIMENT::PARAMS& expParams, MCTS::PARAMS& searchParams);
 
-    void Run();
+    void Run(int n);
     void MultiRun();
     void DiscountedReturn();
     void AverageReward();
