@@ -132,18 +132,18 @@ void EXPERIMENT::Run()
     Results.Time.Add(timer.elapsed());
     Results.UndiscountedReturn.Add(undiscountedReturn);
     Results.DiscountedReturn.Add(discountedReturn);
-    cout << "Discounted return = " << discountedReturn
-        << ", average = " << Results.DiscountedReturn.GetMean() << endl;
-    cout << "Undiscounted return = " << undiscountedReturn
-        << ", average = " << Results.UndiscountedReturn.GetMean() << endl;
+    // cout << "Discounted return = " << discountedReturn
+    //     << ", average = " << Results.DiscountedReturn.GetMean() << endl;
+    // cout << "Undiscounted return = " << undiscountedReturn
+    //     << ", average = " << Results.UndiscountedReturn.GetMean() << endl;
 }
 
 void EXPERIMENT::MultiRun()
 {
+    cout << "Starting " << ExpParams.NumRuns << " runs with "
+            << SearchParams.NumSimulations << " simulations... " << endl;
     for (int n = 0; n < ExpParams.NumRuns; n++)
     {
-        cout << "Starting run " << n + 1 << " with "
-            << SearchParams.NumSimulations << " simulations... " << endl;
         Run();
         if (Results.Time.GetTotal() > ExpParams.TimeOut)
         {
@@ -176,6 +176,7 @@ void EXPERIMENT::DiscountedReturn()
         Results.Clear();
         MultiRun();
 
+        cout << "+----------------------------------------+" << endl;
         cout << "Simulations = " << SearchParams.NumSimulations << endl
             << "Runs = " << Results.Time.GetCount() << endl
             << "Undiscounted return = " << Results.UndiscountedReturn.GetMean()
