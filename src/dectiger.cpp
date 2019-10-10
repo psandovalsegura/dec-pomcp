@@ -30,7 +30,7 @@ void DECTIGER::Validate(const STATE& state) const
 STATE* DECTIGER::CreateStartState() const
 {
     DECTIGER_STATE* nstate = MemoryPool.Allocate();
-    nstate->SL = true;
+    nstate->SL = Bernoulli(0.5);
     return nstate;
 }
 
@@ -47,7 +47,7 @@ bool DECTIGER::Step(STATE& state, int action,
     reward = 0;
     observation = Bernoulli(ObsProb);
 
-    // TODO
+    // Reward function
     if (nstate.SL) {
     	if (action == 0) {
     		reward = -50;
@@ -64,6 +64,11 @@ bool DECTIGER::Step(STATE& state, int action,
     	} else if (action == 2) {
     		reward = -2;
     	}
+    }
+
+    // State change
+    if (action == 0 || action == 1) {
+        nstate.SL = Bernoulli(0.5);
     }
 
     return false;
