@@ -133,6 +133,7 @@ void EXPERIMENT::Run(int n)
     Results.UndiscountedReturn.Add(undiscountedReturn);
     Results.DiscountedReturn.Add(discountedReturn);
     if (n % 500 == 0) {
+        cout << "True initial state: "; Real.DisplayState(*state, cout);
         cout << "Action/Observation History:" << endl;
         HISTORY history = mcts.GetHistory();
         history.Display(cout);

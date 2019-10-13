@@ -5,7 +5,7 @@ using namespace std;
 using namespace UTILS;
 
 DECTIGER::DECTIGER(int numMachines)
-:   ObsProb(0.85)
+:   ObsProb(0.5)
 {
 	NumActions = 3;
     NumObservations = 2;
@@ -55,6 +55,7 @@ bool DECTIGER::Step(STATE& state, int action,
 			reward = +9;
     	} else if (action == 2) {
     		reward = -2;
+            observation = Bernoulli(0.85) ? nstate.SL : !nstate.SL;
     	}
     } else {
     	if (action == 0) {
@@ -63,6 +64,7 @@ bool DECTIGER::Step(STATE& state, int action,
 			reward = -50;
     	} else if (action == 2) {
     		reward = -2;
+            observation = Bernoulli(0.85) ? nstate.SL : !nstate.SL;
     	}
     }
 
