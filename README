@@ -1,5 +1,11 @@
-POMCP 1.0
+## POMCP 1.1
 
 This is the release of POMCP used in the NIPS 2010 paper
 "Online Monte-Carlo Planning in Large POMDPs"
 by David Silver and Joel Veness
+
+Further decentralized extensions by Pedro Sandoval Segura
+
+### How to Use
+1. Compile using `make`
+2. Run `./src/pomcp` with necessary arguments

@@ -4,6 +4,11 @@ autom4te.cache/
 # object files
 *.o
 *.Po
+src/.deps/*
+src/pomcp
 
 # open files
 src/.DS_Store
+
+# output files
+output.txt
