@@ -213,7 +213,7 @@ bool ROCKSAMPLE::Step(STATE& state, int action,
         rockstate.Rocks[rock].Measured++;
 
         double distance = COORD::EuclideanDistance(rockstate.AgentPos, RockPos[rock]);
-    	double efficiency = (1 + pow(2, -distance / HalfEfficiencyDistance)) * 0.5;
+    	  double efficiency = (1 + pow(2, -distance / HalfEfficiencyDistance)) * 0.5;
 
         if (observation == E_GOOD)
         {

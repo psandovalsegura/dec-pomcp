@@ -74,7 +74,7 @@ void EXPERIMENT::Run(int n)
             Real.DisplayReward(reward, cout);
         }
 
-        if (terminal)
+        if (SearchParams.Verbose >= 1 && terminal)
         {
             cout << "Terminated" << endl;
             break;
@@ -119,7 +119,7 @@ void EXPERIMENT::Run(int n)
                 Real.DisplayReward(reward, cout);
             }
 
-            if (terminal)
+            if (SearchParams.Verbose >= 1 && terminal)
             {
                 cout << "Terminated" << endl;
                 break;
@@ -132,7 +132,9 @@ void EXPERIMENT::Run(int n)
     Results.Time.Add(timer.elapsed());
     Results.UndiscountedReturn.Add(undiscountedReturn);
     Results.DiscountedReturn.Add(discountedReturn);
-    if (n % 500 == 0) {
+
+    // Print action/observation history every 500 runs
+    if (SearchParams.Verbose >= 1 && n % 500 == 0) {
         cout << "True initial state: "; Real.DisplayState(*state, cout);
         cout << "Action/Observation History:" << endl;
         HISTORY history = mcts.GetHistory();
@@ -232,6 +234,38 @@ void EXPERIMENT::AverageReward()
             << Results.Reward.GetStdErr() << "\t"
             << Results.Time.GetMean() / Results.Reward.GetCount() << endl;
     }
+}
+
+void EXPERIMENT::DisplayParameters()
+{
+   cout << "-----------------------" << endl;
+    cout << "Experiment Parameters:" << endl;
+    cout << "NumRuns=" << ExpParams.NumRuns << endl;
+    cout << "NumSteps=" << ExpParams.NumSteps << endl;
+    cout << "SimSteps=" << ExpParams.SimSteps << endl;
+    cout << "TimeOut=" << ExpParams.TimeOut << endl;
+    cout << "MinDoubles=" << ExpParams.MinDoubles << endl;
+    cout << "MaxDoubles=" << ExpParams.MaxDoubles << endl;
+    cout << "TransformDoubles=" << ExpParams.TransformDoubles << endl;
+    cout << "TransformAttempts=" << ExpParams.TransformAttempts << endl;
+    cout << "Accuracy=" << ExpParams.Accuracy << endl;
+    cout << "UndiscountedHorizon=" << ExpParams.UndiscountedHorizon << endl;
+    cout << "AutoExploration=" << ExpParams.AutoExploration << endl;
+    cout << "-----------------------" << endl;
+    cout << "Search Parameters:" << endl;
+    cout << "Verbose=" << SearchParams.Verbose << endl;
+    cout << "MaxDepth=" << SearchParams.MaxDepth << endl;
+    cout << "NumSimulations=" << SearchParams.NumSimulations << endl;
+    cout << "NumStartStates=" << SearchParams.NumStartStates << endl;
+    cout << "UseTransforms=" << SearchParams.UseTransforms << endl;
+    cout << "MaxAttempts=" << SearchParams.MaxAttempts << endl;
+    cout << "ExpandCount=" << SearchParams.ExpandCount << endl;
+    cout << "ExplorationConstant=" << SearchParams.ExplorationConstant << endl;
+    cout << "UseRave=" << SearchParams.UseRave << endl;
+    cout << "RaveDiscount=" << SearchParams.RaveDiscount << endl;
+    cout << "RaveConstant=" << SearchParams.RaveConstant << endl;
+    cout << "DisableTree=" << SearchParams.DisableTree << endl;
+    cout << "-----------------------" << endl;
 }
 
 //----------------------------------------------------------------------------

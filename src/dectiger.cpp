@@ -18,7 +18,7 @@ STATE* DECTIGER::Copy(const STATE& state) const
     const DECTIGER_STATE& nstate = safe_cast<const DECTIGER_STATE&>(state);
     DECTIGER_STATE* newstate = MemoryPool.Allocate();
     *newstate = nstate;
-    return newstate; 
+    return newstate;
 }
 
 void DECTIGER::Validate(const STATE& state) const
@@ -40,7 +40,7 @@ void DECTIGER::FreeState(STATE* state) const
     MemoryPool.Free(nstate);
 }
 
-bool DECTIGER::Step(STATE& state, int action, 
+bool DECTIGER::Step(STATE& state, int action,
     int& observation, double& reward) const
 {
     DECTIGER_STATE& nstate = safe_cast<DECTIGER_STATE&>(state);
@@ -76,7 +76,7 @@ bool DECTIGER::Step(STATE& state, int action,
     return false;
 }
 
-void DECTIGER::DisplayBeliefs(const BELIEF_STATE& beliefState, 
+void DECTIGER::DisplayBeliefs(const BELIEF_STATE& beliefState,
     std::ostream& ostr) const
 {
 }

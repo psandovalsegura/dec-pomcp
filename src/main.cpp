@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
     desc.add_options()
         ("help", "produce help message")
         ("test", "run unit tests")
+        ("testrun", "run a single instance using a reasonable number of rollouts")
         ("problem", value<string>(&problem), "problem to run")
         ("outputfile", value<string>(&outputfile)->default_value("output.txt"), "summary output file")
         ("policy", value<string>(&policy), "policy file (explicit POMDPs only)")
@@ -127,12 +128,33 @@ int main(int argc, char* argv[])
         real = new DECTIGER(0);
         simulator = new DECTIGER(0);
     }
-    else 
+    else
     {
         cout << "Unknown problem" << endl;
         exit(1);
     }
 
+    if (vm.count("testrun"))
+    {
+        simulator->SetKnowledge(knowledge);
+
+        // Configure test run
+        expParams.NumRuns = 1;
+        expParams.NumSteps = 200;
+        expParams.MinDoubles = 0;
+        expParams.MaxDoubles = 0;
+
+        searchParams.Verbose = 0;
+        searchParams.NumSimulations = 16;
+
+        EXPERIMENT experiment(*real, *simulator, outputfile, expParams, searchParams);
+        experiment.DisplayParameters();
+        experiment.Run(0);
+
+        // Display Results
+
+        return 0;
+    }
 
     simulator->SetKnowledge(knowledge);
     EXPERIMENT experiment(*real, *simulator, outputfile, expParams, searchParams);
