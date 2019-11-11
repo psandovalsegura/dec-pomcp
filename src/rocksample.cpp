@@ -460,7 +460,7 @@ void ROCKSAMPLE::DisplayState(const STATE& state, std::ostream& ostr) const
             int rock = Grid(pos);
             const ROCKSAMPLE_STATE::ENTRY& entry = rockstate.Rocks[rock];
             if (rockstate.AgentPos == COORD(x, y))
-                ostr << "* ";
+                ostr << "A ";
             else if (rock >= 0 && !entry.Collected)
                 ostr << rock << (entry.Valuable ? "$" : "X");
             else

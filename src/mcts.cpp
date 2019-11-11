@@ -56,13 +56,13 @@ bool MCTS::Update(int action, int observation, double reward)
     VNODE* vnode = qnode.Child(observation);
     if (vnode)
     {
-        if (Params.Verbose >= 1)
+        if (Params.Verbose >= 2)
             cout << "Matched " << vnode->Beliefs().GetNumSamples() << " states" << endl;
         beliefs.Copy(vnode->Beliefs(), Simulator);
     }
     else
     {
-        if (Params.Verbose >= 1)
+        if (Params.Verbose >= 2)
             cout << "No matching node found" << endl;
     }
 
@@ -74,7 +74,7 @@ bool MCTS::Update(int action, int observation, double reward)
     if (beliefs.Empty() && (!vnode || vnode->Beliefs().Empty()))
         return false;
 
-    if (Params.Verbose >= 1)
+    if (Params.Verbose >= 2)
         Simulator.DisplayBeliefs(beliefs, cout);
 
     // Find a state to initialise prior (only requires fully observed state)
@@ -368,7 +368,7 @@ void MCTS::AddTransforms(VNODE* root, BELIEF_STATE& beliefs)
         attempts++;
     }
 
-    if (Params.Verbose >= 1)
+    if (Params.Verbose >= 2)
     {
         cout << "Created " << added << " local transformations out of "
             << attempts << " attempts" << endl;
@@ -424,11 +424,13 @@ void MCTS::ClearStatistics()
 
 void MCTS::DisplayStatistics(ostream& ostr) const
 {
-    if (Params.Verbose >= 1)
+    if (Params.Verbose >= 2)
     {
+        ostr << "/* MCTS::DisplayStatistics */" << endl;
         StatTreeDepth.Print("Tree depth", ostr);
         StatRolloutDepth.Print("Rollout depth", ostr);
         StatTotalReward.Print("Total reward", ostr);
+        ostr << endl;
     }
 
     if (Params.Verbose >= 2)

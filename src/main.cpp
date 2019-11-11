@@ -141,17 +141,12 @@ int main(int argc, char* argv[])
         // Configure test run
         expParams.NumRuns = 1;
         expParams.NumSteps = 200;
-        expParams.MinDoubles = 0;
-        expParams.MaxDoubles = 0;
 
-        searchParams.Verbose = 0;
-        searchParams.NumSimulations = 16;
+        searchParams.NumSimulations = 100000;
 
         EXPERIMENT experiment(*real, *simulator, outputfile, expParams, searchParams);
         experiment.DisplayParameters();
-        experiment.Run(0);
-
-        // Display Results
+        experiment.TestRun();
 
         return 0;
     }

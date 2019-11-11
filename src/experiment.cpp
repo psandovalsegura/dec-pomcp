@@ -52,7 +52,10 @@ void EXPERIMENT::Run(int n)
 
     STATE* state = Real.CreateStartState();
     if (SearchParams.Verbose >= 1)
+        cout << "/* In EXPERIMENT::Run " << n << " */" << endl;
+        cout << "Initial State:" << endl;
         Real.DisplayState(*state, cout);
+        cout << endl;
 
     for (t = 0; t < ExpParams.NumSteps; t++)
     {
@@ -68,10 +71,12 @@ void EXPERIMENT::Run(int n)
 
         if (SearchParams.Verbose >= 1)
         {
+            cout << "/* In Experiment::Run, Action, State, Observation, Reward */" << endl;
             Real.DisplayAction(action, cout);
             Real.DisplayState(*state, cout);
             Real.DisplayObservation(*state, observation, cout);
             Real.DisplayReward(reward, cout);
+            cout << "/* End of Action, State, Observation, Reward */" << endl;
         }
 
         if (SearchParams.Verbose >= 1 && terminal)
@@ -144,6 +149,22 @@ void EXPERIMENT::Run(int n)
     //     << ", average = " << Results.DiscountedReturn.GetMean() << endl;
     // cout << "Undiscounted return = " << undiscountedReturn
     //     << ", average = " << Results.UndiscountedReturn.GetMean() << endl;
+}
+
+void EXPERIMENT::TestRun()
+{
+    // Run experiment with parameters from initializaiton
+    Run(0);
+
+    // Display Results
+    cout << "+----------------------------------------+" << endl;
+    cout << "Simulations = " << SearchParams.NumSimulations << endl
+        << "Runs = " << Results.Time.GetCount() << endl
+        << "Undiscounted return = " << Results.UndiscountedReturn.GetMean()
+        << " +- " << Results.UndiscountedReturn.GetStdErr() << endl
+        << "Discounted return = " << Results.DiscountedReturn.GetMean()
+        << " +- " << Results.DiscountedReturn.GetStdErr() << endl
+        << "Time = " << Results.Time.GetMean() << endl;
 }
 
 void EXPERIMENT::MultiRun()
