@@ -14,7 +14,7 @@ ROCKSAMPLE::ROCKSAMPLE(int size, int rocks)
     NumActions = NumRocks + 5;
     NumObservations = 3;
     RewardRange = 20;
-    Discount = 0.95;
+    Discount = 1; // Was 0.95
 
     if (size == 7 && rocks == 8)
         Init_7_8();

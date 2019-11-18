@@ -140,9 +140,9 @@ int main(int argc, char* argv[])
 
         // Configure test run
         expParams.NumRuns = 1;
-        expParams.NumSteps = 200;
+        expParams.NumSteps = 1000;
 
-        searchParams.NumSimulations = 100000;
+        searchParams.NumSimulations = 1000000;
 
         EXPERIMENT experiment(*real, *simulator, outputfile, expParams, searchParams);
         experiment.DisplayParameters();
