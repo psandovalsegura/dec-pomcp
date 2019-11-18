@@ -13,7 +13,7 @@ AX_BOOST_PROGRAM_OPTIONS
 
 AC_ARG_ENABLE([optimize],
     AS_HELP_STRING(
-        [--enable-optimize], 
+        [--enable-optimize],
         [set CXXFLAGS to -O3 -g (default is yes)]),
     [optimize=$enableval],
     [optimize=yes])
@@ -34,6 +34,9 @@ then
 else
 	CXXFLAGS="$CXXFLAGS"
 fi
+
+CXXFLAGS="$CXXFLAGS `wx-config --cxxflags`"
+LDFLAGS="$LDFLAGS `wx-config --libs`"
 
 AX_CXXFLAGS_WARN_ALL
 AX_CXXFLAGS_GCC_OPTION(-Wextra)
