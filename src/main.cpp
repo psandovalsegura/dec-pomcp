@@ -3,6 +3,7 @@
 #include "network.h"
 #include "pocman.h"
 #include "rocksample.h"
+#include "decrocksample.h"
 #include "tag.h"
 #include "dectiger.h"
 #include "experiment.h"
@@ -118,6 +119,14 @@ int main(int argc, char* argv[])
     {
         real = new ROCKSAMPLE(size, number);
         simulator = new ROCKSAMPLE(size, number);
+    }
+    else if (problem == "decrocksample")
+    {
+        real = new DECROCKSAMPLE(7,8,2);
+        cout << "Created DECROCKSAMPLE simulator!" << endl;
+        STATE* state = real->CreateStartState();
+        real->DisplayState(*state, cout);
+        exit(1);
     }
     else if (problem == "tag")
     {

@@ -104,7 +104,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_pomcp_OBJECTS = pomcp-dectiger.$(OBJEXT) pomcp-battleship.$(OBJEXT) \
+am_pomcp_OBJECTS = pomcp-decrocksample.$(OBJEXT) \
+	pomcp-dectiger.$(OBJEXT) pomcp-battleship.$(OBJEXT) \
 	pomcp-beliefstate.$(OBJEXT) pomcp-coord.$(OBJEXT) \
 	pomcp-experiment.$(OBJEXT) pomcp-main.$(OBJEXT) \
 	pomcp-mcts.$(OBJEXT) pomcp-network.$(OBJEXT) \
@@ -274,6 +275,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 pomcp_SOURCES = \
+decrocksample.cpp \
 dectiger.cpp \
 battleship.cpp \
 beliefstate.cpp \
@@ -291,6 +293,7 @@ testsimulator.cpp \
 utils.cpp
 
 noinst_HEADERS = \
+decrocksample.h \
 dectiger.h \
 battleship.h \
 beliefstate.h \
@@ -407,6 +410,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pomcp-battleship.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pomcp-beliefstate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pomcp-coord.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pomcp-decrocksample.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pomcp-dectiger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pomcp-experiment.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pomcp-main.Po@am__quote@
@@ -433,6 +437,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+pomcp-decrocksample.o: decrocksample.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pomcp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pomcp-decrocksample.o -MD -MP -MF $(DEPDIR)/pomcp-decrocksample.Tpo -c -o pomcp-decrocksample.o `test -f 'decrocksample.cpp' || echo '$(srcdir)/'`decrocksample.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pomcp-decrocksample.Tpo $(DEPDIR)/pomcp-decrocksample.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='decrocksample.cpp' object='pomcp-decrocksample.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pomcp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pomcp-decrocksample.o `test -f 'decrocksample.cpp' || echo '$(srcdir)/'`decrocksample.cpp
+
+pomcp-decrocksample.obj: decrocksample.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pomcp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pomcp-decrocksample.obj -MD -MP -MF $(DEPDIR)/pomcp-decrocksample.Tpo -c -o pomcp-decrocksample.obj `if test -f 'decrocksample.cpp'; then $(CYGPATH_W) 'decrocksample.cpp'; else $(CYGPATH_W) '$(srcdir)/decrocksample.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pomcp-decrocksample.Tpo $(DEPDIR)/pomcp-decrocksample.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='decrocksample.cpp' object='pomcp-decrocksample.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pomcp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pomcp-decrocksample.obj `if test -f 'decrocksample.cpp'; then $(CYGPATH_W) 'decrocksample.cpp'; else $(CYGPATH_W) '$(srcdir)/decrocksample.cpp'; fi`
 
 pomcp-dectiger.o: dectiger.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pomcp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pomcp-dectiger.o -MD -MP -MF $(DEPDIR)/pomcp-dectiger.Tpo -c -o pomcp-dectiger.o `test -f 'dectiger.cpp' || echo '$(srcdir)/'`dectiger.cpp
