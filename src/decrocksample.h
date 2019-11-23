@@ -4,6 +4,7 @@
 #include "simulator.h"
 #include "coord.h"
 #include "grid.h"
+#include "rocksample.h"
 
 class DECROCKSAMPLE_STATE : public STATE
 {
@@ -36,6 +37,9 @@ public:
     virtual void DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const;
     virtual void DisplayAction(int action, std::ostream& ostr) const;
 
+    int NumAgents;
+    std::vector<ROCKSAMPLE> AgentSimulators;
+
   protected:
 
       enum
@@ -55,8 +59,9 @@ public:
       void Init_11_11_5();
 
       GRID<int> Grid;
+
       std::vector<COORD> RockPos;
-      int Size, NumRocks, NumAgents;
+      int Size, NumRocks;
       std::vector<COORD> StartPos;
       double HalfEfficiencyDistance;
       double SmartMoveProb;

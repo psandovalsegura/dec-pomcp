@@ -37,6 +37,25 @@ EXPERIMENT::EXPERIMENT(const SIMULATOR& real,
     MCTS::InitFastUCB(SearchParams.ExplorationConstant);
 }
 
+DECEXPERIMENT::DECEXPERIMENT(const DECROCKSAMPLE& simulator,
+    const string& outputFile,
+    EXPERIMENT::PARAMS& expParams, MCTS::PARAMS& searchParams)
+:   Real(simulator),
+    Simulators(simulator.AgentSimulators),
+    OutputFile(outputFile.c_str()),
+    ExpParams(expParams),
+    SearchParams(searchParams)
+{
+    if (ExpParams.AutoExploration)
+    {
+        if (SearchParams.UseRave)
+            SearchParams.ExplorationConstant = 0;
+        else
+            SearchParams.ExplorationConstant = simulator.GetRewardRange();
+    }
+    MCTS::InitFastUCB(SearchParams.ExplorationConstant);
+}
+
 void EXPERIMENT::Run(int n)
 {
     boost::timer timer;
@@ -52,10 +71,13 @@ void EXPERIMENT::Run(int n)
 
     STATE* state = Real.CreateStartState();
     if (SearchParams.Verbose >= 1)
+    {
         cout << "/* In EXPERIMENT::Run " << n << " */" << endl;
         cout << "Initial State:" << endl;
         Real.DisplayState(*state, cout);
         cout << endl;
+    }
+
 
     for (t = 0; t < ExpParams.NumSteps; t++)
     {
@@ -257,9 +279,134 @@ void EXPERIMENT::AverageReward()
     }
 }
 
+void DECEXPERIMENT::DecentralizedRun()
+{
+    cout << "/* In Experiment::DecentralizedRun */" << endl;
+
+    boost::timer timer;
+    std::vector<MCTS*> mctsVec;
+
+    cout << "Initializing mcts trees for agents" << endl;
+    for (int i = 0; i < Real.NumAgents; i++)
+    {
+        // Decentralized Simulators are assumed to contain
+        // the AgentSimulators vector which provides an
+        // individual agent's state of the world
+        MCTS mcts(Simulators[i], SearchParams);
+        mctsVec.push_back(&mcts);
+    }
+
+    cout << "There are " << mctsVec.size() << " mcts objects" << endl;
+
+    // double undiscountedReturn = 0.0;
+    // double discountedReturn = 0.0;
+    // double discount = 1.0;
+    // bool terminal = false;
+    // bool outOfParticles = false;
+    // int t;
+    //
+    // STATE* state = Real.CreateStartState();
+    // if (SearchParams.Verbose >= 1)
+    //     cout << "/* In EXPERIMENT::Run " << n << " */" << endl;
+    //     cout << "Initial State:" << endl;
+    //     Real.DisplayState(*state, cout);
+    //     cout << endl;
+    //
+    // for (t = 0; t < ExpParams.NumSteps; t++)
+    // {
+    //     int observation;
+    //     double reward;
+    //     int action = mcts.SelectAction();
+    //     terminal = Real.Step(*state, action, observation, reward);
+    //
+    //     Results.Reward.Add(reward);
+    //     undiscountedReturn += reward;
+    //     discountedReturn += reward * discount;
+    //     discount *= Real.GetDiscount();
+    //
+    //     if (SearchParams.Verbose >= 1)
+    //     {
+    //         cout << "/* In Experiment::Run, Action, State, Observation, Reward */" << endl;
+    //         Real.DisplayAction(action, cout);
+    //         Real.DisplayState(*state, cout);
+    //         Real.DisplayObservation(*state, observation, cout);
+    //         Real.DisplayReward(reward, cout);
+    //         cout << "/* End of Action, State, Observation, Reward */" << endl;
+    //     }
+    //
+    //     if (SearchParams.Verbose >= 1 && terminal)
+    //     {
+    //         cout << "Terminated" << endl;
+    //         break;
+    //     }
+    //     outOfParticles = !mcts.Update(action, observation, reward);
+    //     if (outOfParticles)
+    //         break;
+    //
+    //     if (timer.elapsed() > ExpParams.TimeOut)
+    //     {
+    //         cout << "Timed out after " << t << " steps in "
+    //             << Results.Time.GetTotal() << "seconds" << endl;
+    //         break;
+    //     }
+    // }
+    //
+    // if (outOfParticles)
+    // {
+    //     cout << "Out of particles, finishing episode with SelectRandom" << endl;
+    //     HISTORY history = mcts.GetHistory();
+    //     while (++t < ExpParams.NumSteps)
+    //     {
+    //         int observation;
+    //         double reward;
+    //
+    //         // This passes real state into simulator!
+    //         // SelectRandom must only use fully observable state
+    //         // to avoid "cheating"
+    //         int action = Simulator.SelectRandom(*state, history, mcts.GetStatus());
+    //         terminal = Real.Step(*state, action, observation, reward);
+    //
+    //         Results.Reward.Add(reward);
+    //         undiscountedReturn += reward;
+    //         discountedReturn += reward * discount;
+    //         discount *= Real.GetDiscount();
+    //
+    //         if (SearchParams.Verbose >= 1)
+    //         {
+    //             Real.DisplayAction(action, cout);
+    //             Real.DisplayState(*state, cout);
+    //             Real.DisplayObservation(*state, observation, cout);
+    //             Real.DisplayReward(reward, cout);
+    //         }
+    //
+    //         if (SearchParams.Verbose >= 1 && terminal)
+    //         {
+    //             cout << "Terminated" << endl;
+    //             break;
+    //         }
+    //
+    //         history.Add(action, observation);
+    //     }
+    // }
+    //
+    // Results.Time.Add(timer.elapsed());
+    // Results.UndiscountedReturn.Add(undiscountedReturn);
+    // Results.DiscountedReturn.Add(discountedReturn);
+    //
+    // // Print action/observation history every 500 runs
+    // if (SearchParams.Verbose >= 1 && n % 500 == 0) {
+    //     cout << "True initial state: "; Real.DisplayState(*state, cout);
+    //     cout << "Action/Observation History:" << endl;
+    //     HISTORY history = mcts.GetHistory();
+    //     history.Display(cout);
+    // }
+
+    cout << "Search..." << endl;
+}
+
 void EXPERIMENT::DisplayParameters()
 {
-   cout << "-----------------------" << endl;
+    cout << "-----------------------" << endl;
     cout << "Experiment Parameters:" << endl;
     cout << "NumRuns=" << ExpParams.NumRuns << endl;
     cout << "NumSteps=" << ExpParams.NumSteps << endl;

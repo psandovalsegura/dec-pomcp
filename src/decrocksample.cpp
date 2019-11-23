@@ -45,6 +45,12 @@ void DECROCKSAMPLE::InitGeneral()
         Grid(pos) = i;
         RockPos.push_back(pos);
     }
+
+    for (int i = 0; i < NumAgents; ++i)
+    {
+        ROCKSAMPLE *agent = new ROCKSAMPLE(7, 8);
+        AgentSimulators.push_back(*agent);
+    }
 }
 
 void DECROCKSAMPLE::Init_7_8_2()
@@ -80,6 +86,8 @@ void DECROCKSAMPLE::Init_7_8_2()
     for (int i = 0; i < NumAgents; ++i)
     {
         StartPos.push_back(agentPos[i]);
+        ROCKSAMPLE *agent = new ROCKSAMPLE(7, 8);
+        AgentSimulators.push_back(*agent);
     }
 }
 
@@ -122,6 +130,8 @@ void DECROCKSAMPLE::Init_11_11_5()
     for (int i = 0; i < NumAgents; ++i)
     {
         StartPos.push_back(agentPos[i]);
+        ROCKSAMPLE *agent = new ROCKSAMPLE(11, 11);
+        AgentSimulators.push_back(*agent);
     }
 }
 

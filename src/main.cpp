@@ -122,10 +122,13 @@ int main(int argc, char* argv[])
     }
     else if (problem == "decrocksample")
     {
-        real = new DECROCKSAMPLE(7,8,2);
+        DECROCKSAMPLE *real = new DECROCKSAMPLE(7,8,2);
         cout << "Created DECROCKSAMPLE simulator!" << endl;
         STATE* state = real->CreateStartState();
         real->DisplayState(*state, cout);
+
+        DECEXPERIMENT decexperiment(*real, outputfile, expParams, searchParams);
+        decexperiment.DecentralizedRun();
         exit(1);
     }
     else if (problem == "tag")

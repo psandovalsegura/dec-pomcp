@@ -4,6 +4,7 @@
 #include "mcts.h"
 #include "simulator.h"
 #include "statistic.h"
+#include "decrocksample.h"
 #include <fstream>
 
 //----------------------------------------------------------------------------
@@ -56,7 +57,7 @@ public:
     void MultiRun();
     void DiscountedReturn();
     void AverageReward();
-    
+
     void TestRun();
     void DisplayParameters();
 
@@ -70,6 +71,26 @@ private:
 
     std::ofstream OutputFile;
 };
+
+class DECEXPERIMENT
+{
+public:
+    DECEXPERIMENT(const DECROCKSAMPLE& simulator,
+        const std::string& outputFile,
+        EXPERIMENT::PARAMS& expParams, MCTS::PARAMS& searchParams);
+
+    void DecentralizedRun();
+
+  private:
+
+    const DECROCKSAMPLE& Real;
+    std::vector<ROCKSAMPLE> Simulators;
+    EXPERIMENT::PARAMS& ExpParams;
+    MCTS::PARAMS& SearchParams;
+    RESULTS Results;
+    std::ofstream OutputFile;
+};
+
 
 //----------------------------------------------------------------------------
 
