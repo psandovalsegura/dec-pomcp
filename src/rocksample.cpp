@@ -24,6 +24,29 @@ ROCKSAMPLE::ROCKSAMPLE(int size, int rocks)
         InitGeneral();
 }
 
+ROCKSAMPLE::ROCKSAMPLE(int size, int numRocks, COORD startPos, std::vector<COORD> rocks)
+:   Grid(size, size),
+    Size(size),
+    NumRocks(numRocks),
+    SmartMoveProb(0.95),
+    UncertaintyCount(0)
+{
+    NumActions = NumRocks + 5;
+    NumObservations = 3;
+    RewardRange = 20;
+    Discount = 1; // Was 0.95
+
+    StartPos = startPos;
+    HalfEfficiencyDistance = 20;
+    Grid.SetAllValues(-1);
+    for (int i = 0; i < numRocks; i++)
+    {
+        Grid(rocks[i]) = i;
+        RockPos.push_back(rocks[i]);
+    }
+}
+
+
 void ROCKSAMPLE::InitGeneral()
 {
     HalfEfficiencyDistance = 20;

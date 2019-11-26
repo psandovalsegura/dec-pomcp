@@ -79,7 +79,7 @@ public:
         const std::string& outputFile,
         EXPERIMENT::PARAMS& expParams, MCTS::PARAMS& searchParams);
 
-    void DecentralizedRun();
+    void DecentralizedRun(int n);
 
   private:
 

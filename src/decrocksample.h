@@ -9,7 +9,7 @@
 class DECROCKSAMPLE_STATE : public STATE
 {
 public:
-    std::vector<COORD> AgentPos;
+    std::vector<ROCKSAMPLE_STATE> AgentStates;
     struct ENTRY
     {
         bool Valuable;
@@ -30,12 +30,14 @@ public:
     virtual void FreeState(STATE* state) const;
     virtual bool Step(STATE& state, int action,
         int& observation, double& reward) const;
+    bool Step(STATE& state, std::vector<int> jointAction,
+        std::vector<int>& jointObservation, double& reward) const;
 
     virtual void DisplayBeliefs(const BELIEF_STATE& beliefState,
         std::ostream& ostr) const;
     virtual void DisplayState(const STATE& state, std::ostream& ostr) const;
-    virtual void DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const;
-    virtual void DisplayAction(int action, std::ostream& ostr) const;
+    void DisplayJointObservation(std::vector<int> jointObservation, std::ostream& ostr) const;
+    void DisplayJointAction(std::vector<int> jointAction, std::ostream& ostr) const;
 
     int NumAgents;
     std::vector<ROCKSAMPLE> AgentSimulators;
@@ -63,9 +65,6 @@ public:
       std::vector<COORD> RockPos;
       int Size, NumRocks;
       std::vector<COORD> StartPos;
-      double HalfEfficiencyDistance;
-      double SmartMoveProb;
-      int UncertaintyCount;
 
   private:
 

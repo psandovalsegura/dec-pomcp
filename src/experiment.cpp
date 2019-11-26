@@ -279,45 +279,78 @@ void EXPERIMENT::AverageReward()
     }
 }
 
-void DECEXPERIMENT::DecentralizedRun()
+void DECEXPERIMENT::DecentralizedRun(int n)
 {
     cout << "/* In Experiment::DecentralizedRun */" << endl;
 
     boost::timer timer;
     std::vector<MCTS*> mctsVec;
 
-    cout << "Initializing mcts trees for agents" << endl;
     for (int i = 0; i < Real.NumAgents; i++)
     {
         // Decentralized Simulators are assumed to contain
         // the AgentSimulators vector which provides an
         // individual agent's state of the world
-        MCTS mcts(Simulators[i], SearchParams);
-        mctsVec.push_back(&mcts);
+        MCTS* mcts = new MCTS(Simulators[i], SearchParams);
+        mctsVec.push_back(mcts);
     }
 
-    cout << "There are " << mctsVec.size() << " mcts objects" << endl;
+    double undiscountedReturn = 0.0;
+    double discountedReturn = 0.0;
+    double discount = 1.0;
+    bool terminal = false;
+    bool outOfParticles = false;
+    int t;
 
-    // double undiscountedReturn = 0.0;
-    // double discountedReturn = 0.0;
-    // double discount = 1.0;
-    // bool terminal = false;
-    // bool outOfParticles = false;
-    // int t;
-    //
-    // STATE* state = Real.CreateStartState();
-    // if (SearchParams.Verbose >= 1)
-    //     cout << "/* In EXPERIMENT::Run " << n << " */" << endl;
-    //     cout << "Initial State:" << endl;
-    //     Real.DisplayState(*state, cout);
-    //     cout << endl;
-    //
-    // for (t = 0; t < ExpParams.NumSteps; t++)
-    // {
-    //     int observation;
-    //     double reward;
-    //     int action = mcts.SelectAction();
-    //     terminal = Real.Step(*state, action, observation, reward);
+    STATE* state = Real.CreateStartState();
+    if (SearchParams.Verbose >= 1)
+    {
+        cout << "/* In DECEXPERIMENT::Run " << n << " */" << endl;
+        cout << "Initial State:" << endl;
+        Real.DisplayState(*state, cout);
+        cout << endl;
+    }
+
+    for (t = 0; t < ExpParams.NumSteps; t++)
+    {
+        int observation;
+        double reward;
+
+        // Get joint action and observation
+        std::vector<int> jointAction;
+        std::vector<int> jointObservation;
+        for (int i = 0; i < Real.NumAgents; i++)
+        {
+            MCTS* mcts = mctsVec[i];
+            int action = mcts->SelectAction();
+            jointAction.push_back(action);
+        }
+
+        if (SearchParams.Verbose >= 1)
+        {
+            cout << "-----------------" << endl;
+            cout << "Joint action:" << endl;
+            Real.DisplayJointAction(jointAction, cout);
+        }
+
+        terminal = Real.Step(*state, jointAction, jointObservation, reward);
+
+        if (SearchParams.Verbose >= 1)
+        {
+            cout << "Joint observation:" << endl;
+            Real.DisplayJointObservation(jointObservation, cout);
+        }
+
+        if (SearchParams.Verbose >= 1)
+        {
+            cout << "New state:";
+            Real.DisplayState(*state, cout);
+        }
+
+        if (t == 2){
+            break;
+        }
+
     //
     //     Results.Reward.Add(reward);
     //     undiscountedReturn += reward;
@@ -399,9 +432,8 @@ void DECEXPERIMENT::DecentralizedRun()
     //     cout << "Action/Observation History:" << endl;
     //     HISTORY history = mcts.GetHistory();
     //     history.Display(cout);
-    // }
+    }
 
-    cout << "Search..." << endl;
 }
 
 void EXPERIMENT::DisplayParameters()

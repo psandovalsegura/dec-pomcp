@@ -29,6 +29,7 @@ class ROCKSAMPLE : public SIMULATOR
 public:
 
     ROCKSAMPLE(int size, int rocks);
+    ROCKSAMPLE(int size, int numRocks, COORD startPos, std::vector<COORD> rocks);
 
     virtual STATE* Copy(const STATE& state) const;
     virtual void Validate(const STATE& state) const;

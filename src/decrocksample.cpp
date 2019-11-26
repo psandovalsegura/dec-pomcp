@@ -8,9 +8,7 @@ DECROCKSAMPLE::DECROCKSAMPLE(int size, int rocks, int numAgents)
 :   Grid(size, size),
     Size(size),
     NumRocks(rocks),
-    NumAgents(numAgents),
-    SmartMoveProb(0.95),
-    UncertaintyCount(0)
+    NumAgents(numAgents)
 {
     NumActions = NumRocks + 5;
     NumObservations = 3;
@@ -27,7 +25,6 @@ DECROCKSAMPLE::DECROCKSAMPLE(int size, int rocks, int numAgents)
 
 void DECROCKSAMPLE::InitGeneral()
 {
-    HalfEfficiencyDistance = 20;
     for (int i = 0; i < NumAgents; i++)
     {
         StartPos.push_back(COORD(i, Size / 2));
@@ -48,7 +45,7 @@ void DECROCKSAMPLE::InitGeneral()
 
     for (int i = 0; i < NumAgents; ++i)
     {
-        ROCKSAMPLE *agent = new ROCKSAMPLE(7, 8);
+        ROCKSAMPLE *agent = new ROCKSAMPLE(Size, NumRocks, StartPos[i], RockPos);
         AgentSimulators.push_back(*agent);
     }
 }
@@ -75,7 +72,6 @@ void DECROCKSAMPLE::Init_7_8_2()
         COORD(4, 4)
     };
 
-    HalfEfficiencyDistance = 20;
     Grid.SetAllValues(-1);
     for (int i = 0; i < NumRocks; ++i)
     {
@@ -86,7 +82,7 @@ void DECROCKSAMPLE::Init_7_8_2()
     for (int i = 0; i < NumAgents; ++i)
     {
         StartPos.push_back(agentPos[i]);
-        ROCKSAMPLE *agent = new ROCKSAMPLE(7, 8);
+        ROCKSAMPLE *agent = new ROCKSAMPLE(Size, NumRocks, agentPos[i], RockPos);
         AgentSimulators.push_back(*agent);
     }
 }
@@ -119,7 +115,6 @@ void DECROCKSAMPLE::Init_11_11_5()
         COORD(8, 8)
     };
 
-    HalfEfficiencyDistance = 20;
     Grid.SetAllValues(-1);
     for (int i = 0; i < NumRocks; ++i)
     {
@@ -130,7 +125,7 @@ void DECROCKSAMPLE::Init_11_11_5()
     for (int i = 0; i < NumAgents; ++i)
     {
         StartPos.push_back(agentPos[i]);
-        ROCKSAMPLE *agent = new ROCKSAMPLE(11, 11);
+        ROCKSAMPLE *agent = new ROCKSAMPLE(Size, NumRocks, agentPos[i], RockPos);
         AgentSimulators.push_back(*agent);
     }
 }
@@ -156,8 +151,13 @@ void DECROCKSAMPLE::Validate(const STATE& state) const
 STATE* DECROCKSAMPLE::CreateStartState() const
 {
     DECROCKSAMPLE_STATE* rockstate = MemoryPool.Allocate();
-    rockstate->AgentPos = StartPos;
-    rockstate->Rocks.clear();
+    for (int i = 0; i < NumAgents; i++)
+    {
+        ROCKSAMPLE agentSimulator = AgentSimulators[i];
+        ROCKSAMPLE_STATE agentState = safe_cast<ROCKSAMPLE_STATE&>(*(agentSimulator.CreateStartState()));
+        rockstate->AgentStates.push_back(agentState);
+    }
+
     for (int i = 0; i < NumRocks; i++)
     {
         DECROCKSAMPLE_STATE::ENTRY entry;
@@ -177,12 +177,39 @@ void DECROCKSAMPLE::FreeState(STATE* state) const
 bool DECROCKSAMPLE::Step(STATE& state, int action,
     int& observation, double& reward) const
 {
+    // Placeholder to continue to subclass from SIMULATOR
+    // Decentralized problems should really subclass from a
+    // different decentralized simulator in the future
+    return true;
+}
+
+bool DECROCKSAMPLE::Step(STATE& state, std::vector<int> jointAction,
+    std::vector<int>& jointObservation, double& reward) const
+{
     DECROCKSAMPLE_STATE& rockstate = safe_cast<DECROCKSAMPLE_STATE&>(state);
+    std::vector<ROCKSAMPLE_STATE> newAgentStates;
     reward = 0;
-    observation = E_NONE;
 
-    // TODO: should the step function do anything?
+    for (int i = 0; i < NumAgents; i++)
+    {
+        ROCKSAMPLE agentSimulator = AgentSimulators[i];
+        int action = jointAction[i]; // Action chosen by Agent i
+        int observation = E_NONE;    // To be passed by ref into Step
+        double currentReward = 0;    // To be passed by ref into Step
 
+        ROCKSAMPLE_STATE agentState = rockstate.AgentStates[i];
+        int terminated = agentSimulator.Step(agentState, action, observation, currentReward);
+        jointObservation.push_back(observation);
+        newAgentStates.push_back(agentState);
+        reward += currentReward;
+
+        if (terminated)
+        {
+            cout << "Agent " << i << " terminated" << endl;
+        }
+    }
+
+    rockstate.AgentStates = newAgentStates;
     assert(reward != -100);
     return false;
 }
@@ -211,7 +238,8 @@ void DECROCKSAMPLE::DisplayState(const STATE& state, std::ostream& ostr) const
             bool displayAgent = false;
             for (int i = 0; i < NumAgents; i++)
             {
-                if (rockstate.AgentPos[i] == COORD(x, y))
+                COORD agentPos = rockstate.AgentStates[i].AgentPos;
+                if (agentPos == COORD(x, y))
                 {
                     displayAgent = true;
                 }
@@ -231,12 +259,41 @@ void DECROCKSAMPLE::DisplayState(const STATE& state, std::ostream& ostr) const
     ostr << endl;
 }
 
-void DECROCKSAMPLE::DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const
+
+void DECROCKSAMPLE::DisplayJointObservation(std::vector<int> jointObservation, std::ostream& ostr) const
 {
-    // TODO: display joint observation?
+    for (int i = 0; i < jointObservation.size(); i++)
+    {
+        ostr << "Agent " << i << ": ";
+        int observation = jointObservation[i];
+        switch (observation)
+        {
+        case E_NONE:
+            ostr << "None" << endl;
+            break;
+        case E_GOOD:
+            ostr << "Observed good" << endl;
+            break;
+        case E_BAD:
+            ostr << "Observed bad" << endl;
+            break;
+        }
+    }
+    ostr << endl;
 }
 
-void DECROCKSAMPLE::DisplayAction(int action, std::ostream& ostr) const
+void DECROCKSAMPLE::DisplayJointAction(std::vector<int> jointAction, std::ostream& ostr) const
 {
-    // TODO: display joint action?
+    for (int i = 0; i < jointAction.size(); i++)
+    {
+        ostr << "Agent " << i << ": ";
+        int action = jointAction[i];
+        if (action < E_SAMPLE)
+            ostr << COORD::CompassString[action] << endl;
+        if (action == E_SAMPLE)
+            ostr << "Sample" << endl;
+        if (action > E_SAMPLE)
+            ostr << "Check " << action - E_SAMPLE << endl;
+    }
+    ostr << endl;
 }
