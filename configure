@@ -4563,8 +4563,10 @@ else
 	CXXFLAGS="$CXXFLAGS"
 fi
 
+CPPFLAGS="$CPPFLAGS `wx-config --cxxflags`"
 CXXFLAGS="$CXXFLAGS `wx-config --cxxflags`"
-LDFLAGS="$LDFLAGS `wx-config --libs`"
+CFLAGS="$CFLAGS `wx-config --cxxflags`"
+LIBS="$LIBS `wx-config --libs`"
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking CXXFLAGS for maximum warnings" >&5
 $as_echo_n "checking CXXFLAGS for maximum warnings... " >&6; }

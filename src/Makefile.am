@@ -1,4 +1,4 @@
-bin_PROGRAMS = pomcp
+bin_PROGRAMS = pomcp wxminimal
 
 pomcp_SOURCES = \
 decrocksample.cpp \
@@ -48,3 +48,7 @@ pomcp_CPPFLAGS = \
 $(BOOST_CPPFLAGS)
 
 DISTCLEANFILES = *~
+
+wxminimal_SOURCES = minimal.cpp
+wxminimal_LDADD = @LIBS@
+wxminimal_CXXFLAGS = @CXXFLAGS@

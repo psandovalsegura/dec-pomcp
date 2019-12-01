@@ -35,8 +35,10 @@ else
 	CXXFLAGS="$CXXFLAGS"
 fi
 
+CPPFLAGS="$CPPFLAGS `wx-config --cxxflags`"
 CXXFLAGS="$CXXFLAGS `wx-config --cxxflags`"
-LDFLAGS="$LDFLAGS `wx-config --libs`"
+CFLAGS="$CFLAGS `wx-config --cxxflags`"
+LIBS="$LIBS `wx-config --libs`"
 
 AX_CXXFLAGS_WARN_ALL
 AX_CXXFLAGS_GCC_OPTION(-Wextra)

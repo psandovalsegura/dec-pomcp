@@ -339,6 +339,7 @@ void DECEXPERIMENT::DecentralizedRun(int n)
         {
             cout << "Joint observation:" << endl;
             Real.DisplayJointObservation(jointObservation, cout);
+            cout << "Reward: " << reward << endl;
         }
 
         if (SearchParams.Verbose >= 1)
@@ -347,7 +348,7 @@ void DECEXPERIMENT::DecentralizedRun(int n)
             Real.DisplayState(*state, cout);
         }
 
-        if (t == 2){
+        if (t == 100){
             break;
         }
 

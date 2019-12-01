@@ -170,7 +170,7 @@ MyFrame::MyFrame(const wxString& title)
 #if wxUSE_STATUSBAR
     // create a status bar just for fun (by default with 1 pane only)
     CreateStatusBar(2);
-    SetStatusText("Welcome to wxWidgets!");
+    SetStatusText("Welcome to wxWidgets, Pedro!");
 #endif // wxUSE_STATUSBAR
 }
 
