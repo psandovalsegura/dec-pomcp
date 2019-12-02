@@ -87,7 +87,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = pomcp$(EXEEXT) wxminimal$(EXEEXT)
+bin_PROGRAMS = pomcp$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_boost_base.m4 \
@@ -118,11 +118,6 @@ am__DEPENDENCIES_1 =
 pomcp_DEPENDENCIES = $(am__DEPENDENCIES_1)
 pomcp_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(pomcp_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am_wxminimal_OBJECTS = wxminimal-minimal.$(OBJEXT)
-wxminimal_OBJECTS = $(am_wxminimal_OBJECTS)
-wxminimal_DEPENDENCIES =
-wxminimal_LINK = $(CXXLD) $(wxminimal_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -156,8 +151,8 @@ AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(pomcp_SOURCES) $(wxminimal_SOURCES)
-DIST_SOURCES = $(pomcp_SOURCES) $(wxminimal_SOURCES)
+SOURCES = $(pomcp_SOURCES)
+DIST_SOURCES = $(pomcp_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -320,15 +315,14 @@ utils.h
 
 pomcp_LDFLAGS = $(BOOST_LDFLAGS)
 pomcp_LDADD = \
-$(BOOST_PROGRAM_OPTIONS_LIB)
+$(BOOST_PROGRAM_OPTIONS_LIB) \
+ -L/usr/local/lib -pthread   /usr/local/lib/libwx_gtk2u_xrc-3.0.a /usr/local/lib/libwx_gtk2u_qa-3.0.a /usr/local/lib/libwx_baseu_net-3.0.a /usr/local/lib/libwx_gtk2u_html-3.0.a /usr/local/lib/libwx_gtk2u_adv-3.0.a /usr/local/lib/libwx_gtk2u_core-3.0.a /usr/local/lib/libwx_baseu_xml-3.0.a /usr/local/lib/libwx_baseu-3.0.a -lgthread-2.0 -pthread -lX11 -lXxf86vm -lSM -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lfontconfig -lfreetype -lpng -ljpeg -ltiff -lexpat -lwxregexu-3.0 -lz -ldl -lm 
 
 pomcp_CPPFLAGS = \
-$(BOOST_CPPFLAGS)
+$(BOOST_CPPFLAGS) \
+ -I/usr/local/lib/wx/include/gtk2-unicode-static-3.0 -I/usr/local/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -D__WXGTK__ -pthread
 
 DISTCLEANFILES = *~
-wxminimal_SOURCES = minimal.cpp
-wxminimal_LDADD =  -L/usr/local/lib -pthread   /usr/local/lib/libwx_gtk2u_xrc-3.0.a /usr/local/lib/libwx_gtk2u_qa-3.0.a /usr/local/lib/libwx_baseu_net-3.0.a /usr/local/lib/libwx_gtk2u_html-3.0.a /usr/local/lib/libwx_gtk2u_adv-3.0.a /usr/local/lib/libwx_gtk2u_core-3.0.a /usr/local/lib/libwx_baseu_xml-3.0.a /usr/local/lib/libwx_baseu-3.0.a -lgthread-2.0 -pthread -lX11 -lXxf86vm -lSM -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lfontconfig -lfreetype -lpng -ljpeg -ltiff -lexpat -lwxregexu-3.0 -lz -ldl -lm 
-wxminimal_CXXFLAGS = -O3 -g -DNDEBUG -I/usr/local/lib/wx/include/gtk2-unicode-static-3.0 -I/usr/local/include/wx-3.0 -D_FILE_OFFSET_BITS=64 -D__WXGTK__ -pthread -Wall -Wextra
 all: all-am
 
 .SUFFIXES:
@@ -409,10 +403,6 @@ pomcp$(EXEEXT): $(pomcp_OBJECTS) $(pomcp_DEPENDENCIES) $(EXTRA_pomcp_DEPENDENCIE
 	@rm -f pomcp$(EXEEXT)
 	$(AM_V_CXXLD)$(pomcp_LINK) $(pomcp_OBJECTS) $(pomcp_LDADD) $(LIBS)
 
-wxminimal$(EXEEXT): $(wxminimal_OBJECTS) $(wxminimal_DEPENDENCIES) $(EXTRA_wxminimal_DEPENDENCIES) 
-	@rm -f wxminimal$(EXEEXT)
-	$(AM_V_CXXLD)$(wxminimal_LINK) $(wxminimal_OBJECTS) $(wxminimal_LDADD) $(LIBS)
-
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -435,7 +425,6 @@ include ./$(DEPDIR)/pomcp-simulator.Po
 include ./$(DEPDIR)/pomcp-tag.Po
 include ./$(DEPDIR)/pomcp-testsimulator.Po
 include ./$(DEPDIR)/pomcp-utils.Po
-include ./$(DEPDIR)/wxminimal-minimal.Po
 
 .cpp.o:
 	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -674,20 +663,6 @@ pomcp-utils.obj: utils.cpp
 #	$(AM_V_CXX)source='utils.cpp' object='pomcp-utils.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pomcp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pomcp-utils.obj `if test -f 'utils.cpp'; then $(CYGPATH_W) 'utils.cpp'; else $(CYGPATH_W) '$(srcdir)/utils.cpp'; fi`
-
-wxminimal-minimal.o: minimal.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wxminimal_CXXFLAGS) $(CXXFLAGS) -MT wxminimal-minimal.o -MD -MP -MF $(DEPDIR)/wxminimal-minimal.Tpo -c -o wxminimal-minimal.o `test -f 'minimal.cpp' || echo '$(srcdir)/'`minimal.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/wxminimal-minimal.Tpo $(DEPDIR)/wxminimal-minimal.Po
-#	$(AM_V_CXX)source='minimal.cpp' object='wxminimal-minimal.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wxminimal_CXXFLAGS) $(CXXFLAGS) -c -o wxminimal-minimal.o `test -f 'minimal.cpp' || echo '$(srcdir)/'`minimal.cpp
-
-wxminimal-minimal.obj: minimal.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wxminimal_CXXFLAGS) $(CXXFLAGS) -MT wxminimal-minimal.obj -MD -MP -MF $(DEPDIR)/wxminimal-minimal.Tpo -c -o wxminimal-minimal.obj `if test -f 'minimal.cpp'; then $(CYGPATH_W) 'minimal.cpp'; else $(CYGPATH_W) '$(srcdir)/minimal.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/wxminimal-minimal.Tpo $(DEPDIR)/wxminimal-minimal.Po
-#	$(AM_V_CXX)source='minimal.cpp' object='wxminimal-minimal.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wxminimal_CXXFLAGS) $(CXXFLAGS) -c -o wxminimal-minimal.obj `if test -f 'minimal.cpp'; then $(CYGPATH_W) 'minimal.cpp'; else $(CYGPATH_W) '$(srcdir)/minimal.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique

@@ -17,7 +17,9 @@ Note: I decided not to use this lib because it was hard to integrate with build 
 1. Navigate to https://wiki.wxwidgets.org/Compiling_and_getting_started and follow directions
 2. Follow the section on "Testing the installation" to check that it was properly installed
 3. Don't forget to add the installed libraries to the LD_LIBRARY_PATH environement variable
-4.
+
+Note: This page https://wiki.wxwidgets.org/Autoconf helped in modifying the configure.ac file accordingly,
+and in providing the steps to regenerate Makefiles.
 
 ## How to Use
 1. Install dependencies
