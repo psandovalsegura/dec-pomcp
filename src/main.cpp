@@ -12,6 +12,7 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/cmdline.h>
 #include "wx/wxprec.h"
+#include "wx/grid.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -56,11 +57,13 @@ public:
 };
 
 // Define a new frame type: this is going to be our main frame
+class wxGrid;
 class MyFrame : public wxFrame
 {
+    wxGrid *grid;
+
 public:
-    // ctor(s)
-    MyFrame(const wxString& title);
+    MyFrame(const wxString& title, wxSize size);
 
     // event handlers (these functions should _not_ be virtual)
     void OnQuit(wxCommandEvent& event);
@@ -125,7 +128,7 @@ bool MyApp::OnInit()
     // create the main application window
     // and show it (the frames, unlike simple controls, are not shown when
     // created initially)
-    MyFrame *frame = new MyFrame("Minimal wxWidgets App");
+    MyFrame *frame = new MyFrame("POMCP/Dec-POMCP Simulator", wxSize(600,600));
     frame->Show(true);
     // success: wxApp::OnRun() will be called which will enter the main message
     // loop and the application will run. If we returned false here, the
@@ -145,8 +148,8 @@ int MyApp::OnRun()
 // ----------------------------------------------------------------------------
 
 // frame constructor
-MyFrame::MyFrame(const wxString& title)
-       : wxFrame(NULL, wxID_ANY, title)
+MyFrame::MyFrame(const wxString& title, wxSize size)
+       : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, size)
 {
     // set the frame icon
     SetIcon(wxICON(sample));
@@ -175,6 +178,19 @@ MyFrame::MyFrame(const wxString& title)
     CreateStatusBar(2);
     SetStatusText("Welcome to wxWidgets, Pedro!");
 #endif // wxUSE_STATUSBAR
+
+    int gridDimension = 7;
+    int cellSize = 60;
+    grid = new wxGrid(this, wxID_ANY, wxPoint(0,0), size);
+    grid->CreateGrid(0, 0);
+    grid->AppendRows(gridDimension);
+    grid->AppendCols(gridDimension);
+
+    for (int i = 0; i < gridDimension; i++)
+    {
+        grid->SetRowSize(i, cellSize);
+        grid->SetColSize(i, cellSize);
+    }
 }
 
 
