@@ -51,11 +51,8 @@ public:
     // initialization (doing it here and not in the ctor allows to have an error
     // return: if OnInit() returns false, the application terminates)
     virtual bool OnInit();
-
-private:
-    wxString Problem;
-    int Number;
-    int Size;
+    virtual int OnRun();
+    EXPERIMENT *experiment;
 };
 
 // Define a new frame type: this is going to be our main frame
@@ -134,6 +131,13 @@ bool MyApp::OnInit()
     // loop and the application will run. If we returned false here, the
     // application would exit immediately.
     return true;
+}
+
+int MyApp::OnRun()
+{
+    experiment->DisplayParameters();
+    experiment->TestRun();
+    wxApp::OnRun();
 }
 
 // ----------------------------------------------------------------------------
@@ -336,12 +340,16 @@ int main(int argc, char* argv[])
         expParams.NumRuns = 1;
         expParams.NumSteps = 1000;
 
-        searchParams.NumSimulations = 1000000;
+        searchParams.NumSimulations = 10000;
 
-        EXPERIMENT experiment(*real, *simulator, outputfile, expParams, searchParams);
-        experiment.DisplayParameters();
-        experiment.TestRun();
-        wxEntry(argc, argv);
+        EXPERIMENT *experiment = new EXPERIMENT(*real, *simulator, outputfile, expParams, searchParams);
+
+        wxEntryStart(argc, argv);
+        MyApp *app = new MyApp();
+        app->CallOnInit();
+        app->experiment = experiment;
+        app->OnRun();
+
 
         return 0;
     }
