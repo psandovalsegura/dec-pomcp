@@ -60,14 +60,16 @@ public:
 class wxGrid;
 class MyFrame : public wxFrame
 {
-    wxGrid *grid;
-
 public:
     MyFrame(const wxString& title, wxSize size);
 
     // event handlers (these functions should _not_ be virtual)
     void OnQuit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
+    void OnStartExperiment(wxCommandEvent& event);
+
+    wxGrid *grid;
+    MyApp *delegate;
 
 private:
     // any class wishing to process wxWidgets events must use this macro
@@ -87,7 +89,8 @@ enum
     // it is important for the id corresponding to the "About" command to have
     // this standard value as otherwise it won't be handled properly under Mac
     // (where it is special and put into the "Apple" menu)
-    Minimal_About = wxID_ABOUT
+    Minimal_About = wxID_ABOUT,
+    Minimal_StartExperiment = wxID_SYSTEM_MENU
 };
 
 // ----------------------------------------------------------------------------
@@ -100,6 +103,7 @@ enum
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(Minimal_Quit,  MyFrame::OnQuit)
     EVT_MENU(Minimal_About, MyFrame::OnAbout)
+    EVT_MENU(Minimal_StartExperiment, MyFrame::OnStartExperiment)
 wxEND_EVENT_TABLE()
 
 // Create a new application object: this macro will allow wxWidgets to create
@@ -129,6 +133,7 @@ bool MyApp::OnInit()
     // and show it (the frames, unlike simple controls, are not shown when
     // created initially)
     MyFrame *frame = new MyFrame("POMCP/Dec-POMCP Simulator", wxSize(600,600));
+    frame->delegate = this;
     frame->Show(true);
     // success: wxApp::OnRun() will be called which will enter the main message
     // loop and the application will run. If we returned false here, the
@@ -138,9 +143,8 @@ bool MyApp::OnInit()
 
 int MyApp::OnRun()
 {
-    experiment->DisplayParameters();
-    experiment->TestRun();
     wxApp::OnRun();
+    return 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -161,7 +165,7 @@ MyFrame::MyFrame(const wxString& title, wxSize size)
     // the "About" item should be in the help menu
     wxMenu *helpMenu = new wxMenu;
     helpMenu->Append(Minimal_About, "&About\tF1", "Show about dialog");
-
+    fileMenu->Append(Minimal_StartExperiment, "Start Experiment", "Begin running the experiment");
     fileMenu->Append(Minimal_Quit, "E&xit\tAlt-X", "Quit this program");
 
     // now append the freshly created menu to the menu bar...
@@ -176,7 +180,7 @@ MyFrame::MyFrame(const wxString& title, wxSize size)
 #if wxUSE_STATUSBAR
     // create a status bar just for fun (by default with 1 pane only)
     CreateStatusBar(2);
-    SetStatusText("Welcome to wxWidgets, Pedro!");
+    SetStatusText("Start an experiment within the File menu.");
 #endif // wxUSE_STATUSBAR
 
     int gridDimension = 7;
@@ -216,6 +220,12 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
                  "About wxWidgets minimal sample",
                  wxOK | wxICON_INFORMATION,
                  this);
+}
+
+void MyFrame::OnStartExperiment(wxCommandEvent& WXUNUSED(event))
+{
+    this->delegate->experiment->DisplayParameters();
+    this->delegate->experiment->TestRun();
 }
 
 void UnitTests()
