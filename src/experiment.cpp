@@ -173,7 +173,7 @@ void EXPERIMENT::Run(int n)
     //     << ", average = " << Results.UndiscountedReturn.GetMean() << endl;
 }
 
-void EXPERIMENT::TestRun()
+void EXPERIMENT::SingleRun()
 {
     // Run experiment with parameters from initializaiton
     Run(0);

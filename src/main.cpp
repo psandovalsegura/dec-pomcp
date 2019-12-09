@@ -232,7 +232,7 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 void MyFrame::OnStartExperiment(wxCommandEvent& WXUNUSED(event))
 {
     this->delegate->experiment->DisplayParameters();
-    this->delegate->experiment->TestRun();
+    this->delegate->experiment->SingleRun();
 }
 
 void MyFrame::OnStepButton(wxCommandEvent& WXUNUSED(event))
@@ -273,7 +273,7 @@ int main(int argc, char* argv[])
     desc.add_options()
         ("help", "produce help message")
         ("test", "run unit tests")
-        ("testrun", "run a single instance using a reasonable number of rollouts")
+        ("singlerun", "run a single instance using a reasonable number of rollouts")
         ("problem", value<string>(&problem), "problem to run")
         ("outputfile", value<string>(&outputfile)->default_value("output.txt"), "summary output file")
         ("policy", value<string>(&policy), "policy file (explicit POMDPs only)")
@@ -370,7 +370,7 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    if (vm.count("testrun"))
+    if (vm.count("singlerun"))
     {
         simulator->SetKnowledge(knowledge);
 

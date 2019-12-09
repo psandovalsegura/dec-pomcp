@@ -58,7 +58,7 @@ public:
     void DiscountedReturn();
     void AverageReward();
 
-    void TestRun();
+    void SingleRun();
     void DisplayParameters();
 
 private:
