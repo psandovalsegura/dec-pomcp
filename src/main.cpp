@@ -58,10 +58,10 @@ public:
 
 // Define a new frame type: this is going to be our main frame
 class wxGrid;
-class MyFrame : public wxFrame
+class StateFrame : public wxFrame
 {
 public:
-    MyFrame(const wxString& title, wxSize size);
+    StateFrame(const wxString& title, wxSize size);
 
     // event handlers (these functions should _not_ be virtual)
     void OnQuit(wxCommandEvent& event);
@@ -103,11 +103,11 @@ enum
 // the event tables connect the wxWidgets events with the functions (event
 // handlers) which process them. It can be also done at run-time, but for the
 // simple menu events like this the static method is much simpler.
-wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
-    EVT_MENU(Minimal_Quit,  MyFrame::OnQuit)
-    EVT_MENU(Minimal_About, MyFrame::OnAbout)
-    EVT_MENU(Minimal_StartExperiment, MyFrame::OnStartExperiment)
-    EVT_MENU(Minimal_StepButton, MyFrame::OnStepButton)
+wxBEGIN_EVENT_TABLE(StateFrame, wxFrame)
+    EVT_MENU(Minimal_Quit,  StateFrame::OnQuit)
+    EVT_MENU(Minimal_About, StateFrame::OnAbout)
+    EVT_MENU(Minimal_StartExperiment, StateFrame::OnStartExperiment)
+    EVT_MENU(Minimal_StepButton, StateFrame::OnStepButton)
 wxEND_EVENT_TABLE()
 
 // Create a new application object: this macro will allow wxWidgets to create
@@ -136,7 +136,7 @@ bool MyApp::OnInit()
     // create the main application window
     // and show it (the frames, unlike simple controls, are not shown when
     // created initially)
-    MyFrame *frame = new MyFrame("POMCP/Dec-POMCP Simulator", wxSize(600,600));
+    StateFrame *frame = new StateFrame("POMCP/Dec-POMCP Simulator", wxSize(600,600));
     frame->delegate = this;
     frame->Show(true);
     // success: wxApp::OnRun() will be called which will enter the main message
@@ -156,7 +156,7 @@ int MyApp::OnRun()
 // ----------------------------------------------------------------------------
 
 // frame constructor
-MyFrame::MyFrame(const wxString& title, wxSize size)
+StateFrame::StateFrame(const wxString& title, wxSize size)
        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, size)
 {
     // set the frame icon
@@ -202,18 +202,18 @@ MyFrame::MyFrame(const wxString& title, wxSize size)
 
     // Step button
     stepButton = new wxButton(this, Minimal_StepButton, _T("Step"), wxPoint(10, 480), wxSize(60,30), 0);
-    stepButton->Bind(wxEVT_BUTTON, &MyFrame::OnStepButton, this);
+    stepButton->Bind(wxEVT_BUTTON, &StateFrame::OnStepButton, this);
 }
 
 // event handlers
 
-void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
+void StateFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
     // true is to force the frame to close
     Close(true);
 }
 
-void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
+void StateFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxMessageBox(wxString::Format
                  (
@@ -229,13 +229,13 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
                  this);
 }
 
-void MyFrame::OnStartExperiment(wxCommandEvent& WXUNUSED(event))
+void StateFrame::OnStartExperiment(wxCommandEvent& WXUNUSED(event))
 {
     this->delegate->experiment->DisplayParameters();
     this->delegate->experiment->SingleRun();
 }
 
-void MyFrame::OnStepButton(wxCommandEvent& WXUNUSED(event))
+void StateFrame::OnStepButton(wxCommandEvent& WXUNUSED(event))
 {
     cout << "Step" << endl;
 }
