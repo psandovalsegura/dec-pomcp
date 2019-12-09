@@ -42,7 +42,7 @@ using namespace boost::program_options;
 // ----------------------------------------------------------------------------
 
 // Define a new application type, each program should derive a class from wxApp
-class MyApp : public wxApp
+class ExperimentApp : public wxApp
 {
 public:
     // override base class virtuals
@@ -71,7 +71,7 @@ public:
 
     wxGrid *grid;
     wxButton *stepButton;
-    MyApp *delegate;
+    ExperimentApp *delegate;
 
 private:
     // any class wishing to process wxWidgets events must use this macro
@@ -113,9 +113,9 @@ wxEND_EVENT_TABLE()
 // Create a new application object: this macro will allow wxWidgets to create
 // the application object during program execution (it's better than using a
 // static object for many reasons) and also implements the accessor function
-// wxGetApp() which will return the reference of the right type (i.e. MyApp and
+// wxGetApp() which will return the reference of the right type (i.e. ExperimentApp and
 // not wxApp)
-IMPLEMENT_APP_NO_MAIN(MyApp)
+IMPLEMENT_APP_NO_MAIN(ExperimentApp)
 
 // ============================================================================
 // implementation
@@ -126,7 +126,7 @@ IMPLEMENT_APP_NO_MAIN(MyApp)
 // ----------------------------------------------------------------------------
 
 // 'Main program' equivalent: the program execution "starts" here
-bool MyApp::OnInit()
+bool ExperimentApp::OnInit()
 {
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future
@@ -145,7 +145,7 @@ bool MyApp::OnInit()
     return true;
 }
 
-int MyApp::OnRun()
+int ExperimentApp::OnRun()
 {
     wxApp::OnRun();
     return 0;
@@ -383,7 +383,7 @@ int main(int argc, char* argv[])
         EXPERIMENT *experiment = new EXPERIMENT(*real, *simulator, outputfile, expParams, searchParams);
 
         wxEntryStart(argc, argv);
-        MyApp *app = new MyApp();
+        ExperimentApp *app = new ExperimentApp();
         app->CallOnInit();
         app->experiment = experiment;
         app->OnRun();
