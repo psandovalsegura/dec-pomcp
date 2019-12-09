@@ -293,6 +293,7 @@ testsimulator.cpp \
 utils.cpp
 
 noinst_HEADERS = \
+experimentapp.h \
 decrocksample.h \
 dectiger.h \
 battleship.h \
