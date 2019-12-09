@@ -67,8 +67,10 @@ public:
     void OnQuit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnStartExperiment(wxCommandEvent& event);
+    void OnStepButton(wxCommandEvent& event);
 
     wxGrid *grid;
+    wxButton *stepButton;
     MyApp *delegate;
 
 private:
@@ -90,7 +92,8 @@ enum
     // this standard value as otherwise it won't be handled properly under Mac
     // (where it is special and put into the "Apple" menu)
     Minimal_About = wxID_ABOUT,
-    Minimal_StartExperiment = wxID_SYSTEM_MENU
+    Minimal_StartExperiment = wxID_SYSTEM_MENU,
+    Minimal_StepButton = wxID_HIGHEST + 1
 };
 
 // ----------------------------------------------------------------------------
@@ -104,6 +107,7 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(Minimal_Quit,  MyFrame::OnQuit)
     EVT_MENU(Minimal_About, MyFrame::OnAbout)
     EVT_MENU(Minimal_StartExperiment, MyFrame::OnStartExperiment)
+    EVT_MENU(Minimal_StepButton, MyFrame::OnStepButton)
 wxEND_EVENT_TABLE()
 
 // Create a new application object: this macro will allow wxWidgets to create
@@ -185,7 +189,7 @@ MyFrame::MyFrame(const wxString& title, wxSize size)
 
     int gridDimension = 7;
     int cellSize = 60;
-    grid = new wxGrid(this, wxID_ANY, wxPoint(0,0), size);
+    grid = new wxGrid(this, wxID_ANY, wxPoint(0,0), wxSize(gridDimension*cellSize + 1.5 * cellSize, gridDimension*cellSize + cellSize));
     grid->CreateGrid(0, 0);
     grid->AppendRows(gridDimension);
     grid->AppendCols(gridDimension);
@@ -195,8 +199,11 @@ MyFrame::MyFrame(const wxString& title, wxSize size)
         grid->SetRowSize(i, cellSize);
         grid->SetColSize(i, cellSize);
     }
-}
 
+    // Step button
+    stepButton = new wxButton(this, Minimal_StepButton, _T("Step"), wxPoint(10, 480), wxSize(60,30), 0);
+    stepButton->Bind(wxEVT_BUTTON, &MyFrame::OnStepButton, this);
+}
 
 // event handlers
 
@@ -226,6 +233,11 @@ void MyFrame::OnStartExperiment(wxCommandEvent& WXUNUSED(event))
 {
     this->delegate->experiment->DisplayParameters();
     this->delegate->experiment->TestRun();
+}
+
+void MyFrame::OnStepButton(wxCommandEvent& WXUNUSED(event))
+{
+    cout << "Step" << endl;
 }
 
 void UnitTests()
