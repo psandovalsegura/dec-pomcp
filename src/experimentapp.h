@@ -47,6 +47,7 @@ public:
     virtual int OnRun();
     EXPERIMENT *experiment;
     STATE *state;
+    bool terminated;
     std::vector<COORD> rockPos;
 };
 
@@ -64,6 +65,7 @@ public:
     void OnStepButton(wxCommandEvent& event);
     void DisplayState(STATE* state);
     void SetCellValue(int x, int y, const wxString& s);
+    void SetStatusBarText(const char *s);
 
     wxGrid *grid;
     wxButton *stepButton;
@@ -180,7 +182,7 @@ StateFrame::StateFrame(const wxString& title, wxSize size)
 #if wxUSE_STATUSBAR
     // create a status bar just for fun (by default with 1 pane only)
     CreateStatusBar(2);
-    SetStatusText("Start an experiment within the File menu.");
+    SetStatusText("Start an experiment within the File menu");
 #endif // wxUSE_STATUSBAR
 
     int gridDimension = 7;
@@ -227,6 +229,7 @@ void StateFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void StateFrame::DisplayState(STATE* state)
 {
+    grid->ClearGrid();
     ROCKSAMPLE_STATE* rockstate = safe_cast<ROCKSAMPLE_STATE*>(state);
 
     // Draw agent
@@ -260,7 +263,6 @@ void StateFrame::DisplayState(STATE* state)
             }
         }
     }
-    cout << "State displayed" << endl;
 }
 
 void StateFrame::SetCellValue(int x, int y, const wxString& s)
@@ -270,16 +272,48 @@ void StateFrame::SetCellValue(int x, int y, const wxString& s)
     grid->SetCellAlignment(x, y, wxALIGN_CENTRE, wxALIGN_CENTRE);
 }
 
+void StateFrame::SetStatusBarText(const char *s)
+{
+    #if wxUSE_STATUSBAR
+        SetStatusText(s);
+    #endif // wxUSE_STATUSBAR
+}
+
 void StateFrame::OnStartExperiment(wxCommandEvent& WXUNUSED(event))
 {
+    this->delegate->terminated = false;
     this->delegate->state = this->delegate->experiment->StartSteppedSingleRun();
+
+    // Display initial state on UI
     DisplayState(this->delegate->state);
 }
 
 void StateFrame::OnStepButton(wxCommandEvent& WXUNUSED(event))
 {
-    this->delegate->experiment->StepSingleRun(this->delegate->state);
-    cout << "Step" << endl;
+    // Check if experiment has not started
+    if (this->delegate->state == NULL)
+    {
+        SetStatusBarText("Cannot step because experiment has not started");
+        return;
+    }
+
+    if (this->delegate->terminated == true)
+    {
+        SetStatusBarText("Rollout has terminated. Begin a new one!");
+        return;
+    }
+
+    SetStatusBarText("Stepped");
+    bool terminal = this->delegate->experiment->StepSingleRun(this->delegate->state);
+
+    // Display new state on UI
+    DisplayState(this->delegate->state);
+
+    if (terminal)
+    {
+        this->delegate->terminated = true;
+        SetStatusBarText("Rollout reached terminal state");
+    }
 }
 
 #endif // EXPERIMENTAPP
