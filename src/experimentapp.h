@@ -214,15 +214,14 @@ void StateFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 void StateFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxMessageBox(wxString::Format
-                 (
-                    "Welcome to %s!\n"
-                    "\n"
-                    "This is the minimal wxWidgets sample\n"
-                    "running under %s.",
-                    wxVERSION_STRING,
-                    wxGetOsDescription()
+                 (  "\n"
+                    "This is the POMCP/Dec-POMCP Simulator\n"
+                    "built by Pedro Sandoval Segura\n"
+                    "running under %s with %s.",
+                    wxGetOsDescription(),
+                    wxVERSION_STRING
                  ),
-                 "About wxWidgets minimal sample",
+                 "About POMCP/Dec-POMCP Simulator",
                  wxOK | wxICON_INFORMATION,
                  this);
 }
