@@ -61,6 +61,9 @@ public:
     void SingleRun();
     void DisplayParameters();
 
+    STATE* StartSteppedSingleRun();
+    void StepSingleRun(STATE *state);
+
 private:
 
     const SIMULATOR& Real;
@@ -70,6 +73,8 @@ private:
     RESULTS Results;
 
     std::ofstream OutputFile;
+    MCTS* steppedMCTS;
+    double steppedDiscount;
 };
 
 class DECEXPERIMENT

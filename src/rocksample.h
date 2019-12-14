@@ -51,6 +51,9 @@ public:
     virtual void DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const;
     virtual void DisplayAction(int action, std::ostream& ostr) const;
 
+    // Exposed to obtain rock position on UI
+    std::vector<COORD> RockPos;
+
 protected:
 
     enum
@@ -72,7 +75,6 @@ protected:
     int SelectTarget(const ROCKSAMPLE_STATE& rockstate) const;
 
     GRID<int> Grid;
-    std::vector<COORD> RockPos;
     int Size, NumRocks;
     COORD StartPos;
     double HalfEfficiencyDistance;

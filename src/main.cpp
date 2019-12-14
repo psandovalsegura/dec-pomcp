@@ -159,6 +159,7 @@ int main(int argc, char* argv[])
         ExperimentApp *app = new ExperimentApp();
         app->CallOnInit();
         app->experiment = experiment;
+        app->rockPos = ((ROCKSAMPLE*)real)->RockPos;
         app->OnRun();
 
 

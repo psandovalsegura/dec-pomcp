@@ -46,6 +46,8 @@ public:
     virtual bool OnInit();
     virtual int OnRun();
     EXPERIMENT *experiment;
+    STATE *state;
+    std::vector<COORD> rockPos;
 };
 
 // Define a new frame type: this is going to be our main frame
@@ -60,6 +62,8 @@ public:
     void OnAbout(wxCommandEvent& event);
     void OnStartExperiment(wxCommandEvent& event);
     void OnStepButton(wxCommandEvent& event);
+    void DisplayState(STATE* state);
+    void SetCellValue(int x, int y, const wxString& s);
 
     wxGrid *grid;
     wxButton *stepButton;
@@ -221,14 +225,60 @@ void StateFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
                  this);
 }
 
+void StateFrame::DisplayState(STATE* state)
+{
+    ROCKSAMPLE_STATE* rockstate = safe_cast<ROCKSAMPLE_STATE*>(state);
+
+    // Draw agent
+    int gridDimension = grid->GetNumberRows();
+    int agentX = gridDimension - 1 - rockstate->AgentPos.Y; // See later note on axis
+    int agentY = rockstate->AgentPos.X;
+    grid->SetCellTextColour(agentX, agentY, *wxRED);
+    SetCellValue(agentX, agentY, wxT("A"));
+
+    // Draw rocks
+    std::vector<COORD> rockPos = (this->delegate->rockPos);
+    int numRocks = rockstate->Rocks.size();
+    for (int i = 0; i < numRocks; i++)
+    {
+        COORD pos = rockPos[i];
+        const ROCKSAMPLE_STATE::ENTRY& entry = rockstate->Rocks[i];
+        if (!entry.Collected)
+        {
+            // rockPos has a weird axis definition
+            // (defined in ROCKSAMPLE's DisplayState),
+            // so we have to correct for it here
+            int row = gridDimension - 1 - pos.Y;
+            int col = pos.X;
+
+            SetCellValue(row, col, wxString::Format(wxT("%i"), i));
+            if (entry.Valuable)
+            {
+                grid->SetCellTextColour(row, col, *wxGREEN);
+            } else {
+                grid->SetCellTextColour(row, col, *wxBLACK);
+            }
+        }
+    }
+    cout << "State displayed" << endl;
+}
+
+void StateFrame::SetCellValue(int x, int y, const wxString& s)
+{
+    grid->SetCellFont(x, y, wxFont(wxFontInfo(15).Bold()));
+    grid->SetCellValue(x, y, s);
+    grid->SetCellAlignment(x, y, wxALIGN_CENTRE, wxALIGN_CENTRE);
+}
+
 void StateFrame::OnStartExperiment(wxCommandEvent& WXUNUSED(event))
 {
-    this->delegate->experiment->DisplayParameters();
-    this->delegate->experiment->SingleRun();
+    this->delegate->state = this->delegate->experiment->StartSteppedSingleRun();
+    DisplayState(this->delegate->state);
 }
 
 void StateFrame::OnStepButton(wxCommandEvent& WXUNUSED(event))
 {
+    this->delegate->experiment->StepSingleRun(this->delegate->state);
     cout << "Step" << endl;
 }
 
