@@ -234,10 +234,10 @@ void StateFrame::DisplayState(STATE* state)
 
     // Draw agent
     int gridDimension = grid->GetNumberRows();
-    int agentX = gridDimension - 1 - rockstate->AgentPos.Y; // See later note on axis
-    int agentY = rockstate->AgentPos.X;
-    grid->SetCellTextColour(agentX, agentY, *wxRED);
-    SetCellValue(agentX, agentY, wxT("A"));
+    int agentRow = gridDimension - 1 - rockstate->AgentPos.Y; // See later note on axis
+    int agentCol = rockstate->AgentPos.X;
+    grid->SetCellTextColour(agentRow, agentCol, *wxRED);
+    SetCellValue(agentRow, agentCol, wxT("A"));
 
     // Draw rocks
     std::vector<COORD> rockPos = (this->delegate->rockPos);
@@ -260,6 +260,14 @@ void StateFrame::DisplayState(STATE* state)
                 grid->SetCellTextColour(row, col, *wxGREEN);
             } else {
                 grid->SetCellTextColour(row, col, *wxBLACK);
+            }
+
+            // Check if the agent is in the cell with a rock
+            if (row == agentRow && col == agentCol)
+            {
+                grid->SetCellBackgroundColour(row, col, *wxRED);
+            } else {
+                grid->SetCellBackgroundColour(row, col, *wxWHITE);
             }
         }
     }

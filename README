@@ -28,7 +28,7 @@ and in providing the steps to regenerate Makefiles.
 
 Typically, I run:
 ```
-./src/pomcp --problem rocksample --size 7 --number 8 --verbose 1 --singlerun
+./src/pomcp --problem rocksample --size 7 --number 8 --verbose 1 --singlerun --numsimulations 10
 ```
 
 ### Adding new files

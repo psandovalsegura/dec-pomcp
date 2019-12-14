@@ -58,8 +58,9 @@ int main(int argc, char* argv[])
         ("runs", value<int>(&expParams.NumRuns), "number of runs")
         ("accuracy", value<double>(&expParams.Accuracy), "accuracy level used to determine horizon")
         ("horizon", value<int>(&expParams.UndiscountedHorizon), "horizon to use when not discounting")
-        ("num steps", value<int>(&expParams.NumSteps), "number of steps to run when using average reward")
+        ("numsteps", value<int>(&expParams.NumSteps), "number of steps to run when using average reward")
         ("verbose", value<int>(&searchParams.Verbose), "verbosity level")
+        ("numsimulations", value<int>(&searchParams.NumSimulations), "number of steps to run when using average reward")
         ("autoexploration", value<bool>(&expParams.AutoExploration), "Automatically assign UCB exploration constant")
         ("exploration", value<double>(&searchParams.ExplorationConstant), "Manual value for UCB exploration constant")
         ("usetransforms", value<bool>(&searchParams.UseTransforms), "Use transforms")
@@ -149,10 +150,6 @@ int main(int argc, char* argv[])
 
         // Configure test run
         expParams.NumRuns = 1;
-        expParams.NumSteps = 1000;
-
-        searchParams.NumSimulations = 10000;
-
         EXPERIMENT *experiment = new EXPERIMENT(*real, *simulator, outputfile, expParams, searchParams);
 
         wxEntryStart(argc, argv);
@@ -161,8 +158,7 @@ int main(int argc, char* argv[])
         app->experiment = experiment;
         app->rockPos = ((ROCKSAMPLE*)real)->RockPos;
         app->OnRun();
-
-
+        
         return 0;
     }
 
