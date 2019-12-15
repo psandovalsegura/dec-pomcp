@@ -382,7 +382,11 @@ void DECEXPERIMENT::DecentralizedRun(int n)
     double discountedReturn = 0.0;
     double discount = 1.0;
     bool terminal = false;
-    bool outOfParticles = false;
+    std::vector<bool> outOfParticlesVec = std::vector<bool>();
+    for (int i = 0; i < Real.NumAgents; i++)
+    {
+        outOfParticlesVec.push_back(false);
+    }
     int t;
 
     STATE* state = Real.CreateStartState();
@@ -409,114 +413,95 @@ void DECEXPERIMENT::DecentralizedRun(int n)
             jointAction.push_back(action);
         }
 
+        terminal = Real.Step(*state, jointAction, jointObservation, reward);
+
         if (SearchParams.Verbose >= 1)
         {
             cout << "-----------------" << endl;
             cout << "Joint action:" << endl;
             Real.DisplayJointAction(jointAction, cout);
-        }
-
-        terminal = Real.Step(*state, jointAction, jointObservation, reward);
-
-        if (SearchParams.Verbose >= 1)
-        {
             cout << "Joint observation:" << endl;
             Real.DisplayJointObservation(jointObservation, cout);
             cout << "Reward: " << reward << endl;
-        }
-
-        if (SearchParams.Verbose >= 1)
-        {
-            cout << "New state:";
+            cout << "New state:" << endl;
             Real.DisplayState(*state, cout);
+            cout << endl;
         }
 
-        if (t == 100){
+        Results.Reward.Add(reward);
+        undiscountedReturn += reward;
+        discountedReturn += reward * discount;
+        discount *= Real.GetDiscount();
+
+        if (terminal)
+        {
+            cout << "Terminated" << endl;
             break;
         }
 
-    //
-    //     Results.Reward.Add(reward);
-    //     undiscountedReturn += reward;
-    //     discountedReturn += reward * discount;
-    //     discount *= Real.GetDiscount();
-    //
-    //     if (SearchParams.Verbose >= 1)
-    //     {
-    //         cout << "/* In Experiment::Run, Action, State, Observation, Reward */" << endl;
-    //         Real.DisplayAction(action, cout);
-    //         Real.DisplayState(*state, cout);
-    //         Real.DisplayObservation(*state, observation, cout);
-    //         Real.DisplayReward(reward, cout);
-    //         cout << "/* End of Action, State, Observation, Reward */" << endl;
-    //     }
-    //
-    //     if (terminal)
-    //     {
-    //         cout << "Terminated" << endl;
-    //         break;
-    //     }
-    //     outOfParticles = !mcts.Update(action, observation, reward);
-    //     if (outOfParticles)
-    //         break;
-    //
-    //     if (timer.elapsed() > ExpParams.TimeOut)
-    //     {
-    //         cout << "Timed out after " << t << " steps in "
-    //             << Results.Time.GetTotal() << "seconds" << endl;
-    //         break;
-    //     }
-    // }
-    //
-    // if (outOfParticles)
-    // {
-    //     cout << "Out of particles, finishing episode with SelectRandom" << endl;
-    //     HISTORY history = mcts.GetHistory();
-    //     while (++t < ExpParams.NumSteps)
-    //     {
-    //         int observation;
-    //         double reward;
-    //
-    //         // This passes real state into simulator!
-    //         // SelectRandom must only use fully observable state
-    //         // to avoid "cheating"
-    //         int action = Simulator.SelectRandom(*state, history, mcts.GetStatus());
-    //         terminal = Real.Step(*state, action, observation, reward);
-    //
-    //         Results.Reward.Add(reward);
-    //         undiscountedReturn += reward;
-    //         discountedReturn += reward * discount;
-    //         discount *= Real.GetDiscount();
-    //
-    //         if (SearchParams.Verbose >= 1)
-    //         {
-    //             Real.DisplayAction(action, cout);
-    //             Real.DisplayState(*state, cout);
-    //             Real.DisplayObservation(*state, observation, cout);
-    //             Real.DisplayReward(reward, cout);
-    //         }
-    //
-    //         if (terminal)
-    //         {
-    //             cout << "Terminated" << endl;
-    //             break;
-    //         }
-    //
-    //         history.Add(action, observation);
-    //     }
-    // }
-    //
-    // Results.Time.Add(timer.elapsed());
-    // Results.UndiscountedReturn.Add(undiscountedReturn);
-    // Results.DiscountedReturn.Add(discountedReturn);
-    //
-    // // Print action/observation history every 500 runs
-    // if (SearchParams.Verbose >= 1 && n % 500 == 0) {
-    //     cout << "True initial state: "; Real.DisplayState(*state, cout);
-    //     cout << "Action/Observation History:" << endl;
-    //     HISTORY history = mcts.GetHistory();
-    //     history.Display(cout);
+        bool toBreak = false;
+        for (int i = 0; i < Real.NumAgents; i++)
+        {
+            MCTS* mcts = mctsVec[i];
+            outOfParticlesVec[i] = !mcts->Update(jointAction[i], jointObservation[i], reward);
+            toBreak |= outOfParticlesVec[i];
+        }
+
+        if (toBreak)
+            break;
+
+        if (timer.elapsed() > ExpParams.TimeOut)
+        {
+            cout << "Timed out after " << t << " steps in "
+                << Results.Time.GetTotal() << "seconds" << endl;
+            break;
+        }
     }
+
+    // for (int i = 0; i < Real.NumAgents; i++)
+    // {
+    //     if (outOfParticlesVec[i])
+    //     {
+    //         cout << "Out of particles for agent " << i << ", finishing episode with SelectRandom" << endl;
+    //         HISTORY history = mctsVec[i].GetHistory();
+    //         while (++t < ExpParams.NumSteps)
+    //         {
+    //             int observation;
+    //             double reward;
+    //
+    //             // This passes real state into simulator!
+    //             // SelectRandom must only use fully observable state
+    //             // to avoid "cheating"
+    //             int action = Simulator.SelectRandom(*state, history, mcts.GetStatus());
+    //             terminal = Real.Step(*state, action, observation, reward);
+    //
+    //             Results.Reward.Add(reward);
+    //             undiscountedReturn += reward;
+    //             discountedReturn += reward * discount;
+    //             discount *= Real.GetDiscount();
+    //
+    //             if (SearchParams.Verbose >= 1)
+    //             {
+    //                 Real.DisplayAction(action, cout);
+    //                 Real.DisplayState(*state, cout);
+    //                 Real.DisplayObservation(*state, observation, cout);
+    //                 Real.DisplayReward(reward, cout);
+    //             }
+    //
+    //             if (terminal)
+    //             {
+    //                 cout << "Terminated" << endl;
+    //                 break;
+    //             }
+    //
+    //             history.Add(action, observation);
+    //         }
+    //     }
+    // }
+
+    Results.Time.Add(timer.elapsed());
+    Results.UndiscountedReturn.Add(undiscountedReturn);
+    Results.DiscountedReturn.Add(discountedReturn);
 
 }
 

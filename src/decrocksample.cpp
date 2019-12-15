@@ -206,6 +206,7 @@ bool DECROCKSAMPLE::Step(STATE& state, std::vector<int> jointAction,
         if (terminated)
         {
             cout << "Agent " << i << " terminated" << endl;
+            return terminated;
         }
     }
 
