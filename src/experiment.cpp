@@ -183,7 +183,7 @@ STATE* EXPERIMENT::StartSteppedSingleRun()
     return state;
 }
 
-bool EXPERIMENT::StepSingleRun(STATE *state)
+bool EXPERIMENT::StepSingleRun(STATE *state, int& action)
 {
     double undiscountedReturn = 0.0;
     double discountedReturn = 0.0;
@@ -193,7 +193,7 @@ bool EXPERIMENT::StepSingleRun(STATE *state)
 
     int observation;
     double reward;
-    int action = steppedMCTS->SelectAction();
+    action = steppedMCTS->SelectAction();
     terminal = Real.Step(*state, action, observation, reward);
 
     Results.Reward.Add(reward);

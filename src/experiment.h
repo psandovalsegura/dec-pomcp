@@ -62,7 +62,7 @@ public:
     void DisplayParameters();
 
     STATE* StartSteppedSingleRun();
-    bool StepSingleRun(STATE *state);
+    bool StepSingleRun(STATE *state, int& action);
 
 private:
 

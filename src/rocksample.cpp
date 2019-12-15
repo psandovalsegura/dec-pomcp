@@ -518,5 +518,7 @@ void ROCKSAMPLE::DisplayAction(int action, std::ostream& ostr) const
     if (action == E_SAMPLE)
         ostr << "Sample" << endl;
     if (action > E_SAMPLE)
-        ostr << "Check " << action - E_SAMPLE << endl;
+        // Changed (action - E_SAMPLE) because
+        // this doesn't ever display "Check 0" for the first rock?
+        ostr << "Check " << action - E_SAMPLE - 1 << endl;
 }

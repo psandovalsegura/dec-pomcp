@@ -64,6 +64,7 @@ public:
     void OnStartExperiment(wxCommandEvent& event);
     void OnStepButton(wxCommandEvent& event);
     void DisplayState(STATE* state);
+    void DisplayStateAction(STATE* state, int action);
     void SetCellValue(int x, int y, const wxString& s);
     void SetStatusBarText(const char *s);
 
@@ -272,6 +273,39 @@ void StateFrame::DisplayState(STATE* state)
     }
 }
 
+void StateFrame::DisplayStateAction(STATE* state, int action)
+{
+    DisplayState(state);
+
+    enum
+    {
+        E_SAMPLE = 4
+    };
+
+    ROCKSAMPLE_STATE* rockstate = safe_cast<ROCKSAMPLE_STATE*>(state);
+    int gridDimension = grid->GetNumberRows();
+
+
+    if (action == E_SAMPLE)
+    {
+        // Highlight cell which agent is sampling
+        int agentRow = gridDimension - 1 - rockstate->AgentPos.Y; // See DisplayState
+        int agentCol = rockstate->AgentPos.X;
+        grid->SetCellBackgroundColour(agentRow, agentCol, *wxLIGHT_GREY);
+    }
+
+    if (action > E_SAMPLE)
+    {
+        // Highlight cell that is being checked
+        int rockIndex = action - E_SAMPLE - 1;
+        std::vector<COORD> rockPos = (this->delegate->rockPos);
+        COORD pos = rockPos[rockIndex];
+        int row = gridDimension - 1 - pos.Y;
+        int col = pos.X;
+        grid->SetCellBackgroundColour(row, col, *wxCYAN);
+    }
+}
+
 void StateFrame::SetCellValue(int x, int y, const wxString& s)
 {
     grid->SetCellFont(x, y, wxFont(wxFontInfo(15).Bold()));
@@ -311,10 +345,11 @@ void StateFrame::OnStepButton(wxCommandEvent& WXUNUSED(event))
     }
 
     SetStatusBarText("Stepped");
-    bool terminal = this->delegate->experiment->StepSingleRun(this->delegate->state);
+    int action;
+    bool terminal = this->delegate->experiment->StepSingleRun(this->delegate->state, action);
 
     // Display new state on UI
-    DisplayState(this->delegate->state);
+    DisplayStateAction(this->delegate->state, action);
 
     if (terminal)
     {
