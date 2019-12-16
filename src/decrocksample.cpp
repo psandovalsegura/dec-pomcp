@@ -183,36 +183,38 @@ bool DECROCKSAMPLE::Step(STATE& state, int action,
     return true;
 }
 
-bool DECROCKSAMPLE::Step(STATE& state, std::vector<int> jointAction,
+std::vector<bool> DECROCKSAMPLE::Step(STATE& state, std::vector<bool> terminalStates, std::vector<int> jointAction,
     std::vector<int>& jointObservation, double& reward) const
 {
     DECROCKSAMPLE_STATE& rockstate = safe_cast<DECROCKSAMPLE_STATE&>(state);
     std::vector<ROCKSAMPLE_STATE> newAgentStates;
+    std::vector<bool> newTerminalStates;
     reward = 0;
 
     for (int i = 0; i < NumAgents; i++)
     {
         ROCKSAMPLE agentSimulator = AgentSimulators[i];
-        int action = jointAction[i]; // Action chosen by Agent i
-        int observation;             // To be passed by ref into Step
-        double currentReward = 0;    // To be passed by ref into Step
+        int action = jointAction[i];        // Action chosen by Agent i
+        bool terminal = terminalStates[i];  // Whether Agent i has reached a terminal state
+        int observation = E_NONE;           // To be passed by ref into Step
+        double currentReward = 0;           // To be passed by ref into Step
 
         ROCKSAMPLE_STATE agentState = rockstate.AgentStates[i];
-        int terminated = agentSimulator.Step(agentState, action, observation, currentReward);
+        if (!terminal)
+        {
+            // Only step Agent i forward if not in a terminal state
+            terminal = agentSimulator.Step(agentState, action, observation, currentReward);
+        }
+
+        newTerminalStates.push_back(terminal);
         jointObservation.push_back(observation);
         newAgentStates.push_back(agentState);
         reward += currentReward;
-
-        if (terminated)
-        {
-            cout << "Agent " << i << " terminated" << endl;
-            return terminated;
-        }
+        assert(currentReward != -100);
     }
 
     rockstate.AgentStates = newAgentStates;
-    assert(reward != -100);
-    return false;
+    return newTerminalStates;
 }
 
 void DECROCKSAMPLE::DisplayBeliefs(const BELIEF_STATE& beliefState,

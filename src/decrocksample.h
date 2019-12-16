@@ -30,7 +30,7 @@ public:
     virtual void FreeState(STATE* state) const;
     virtual bool Step(STATE& state, int action,
         int& observation, double& reward) const;
-    bool Step(STATE& state, std::vector<int> jointAction,
+    std::vector<bool> Step(STATE& state, std::vector<bool> terminalStates, std::vector<int> jointAction,
         std::vector<int>& jointObservation, double& reward) const;
 
     virtual void DisplayBeliefs(const BELIEF_STATE& beliefState,

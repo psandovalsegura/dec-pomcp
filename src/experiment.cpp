@@ -389,10 +389,11 @@ void DECEXPERIMENT::DecentralizedRun(int n)
     double undiscountedReturn = 0.0;
     double discountedReturn = 0.0;
     double discount = 1.0;
-    bool terminal = false;
-    std::vector<bool> outOfParticlesVec = std::vector<bool>();
+    std::vector<bool> agentsTerminalState;
+    std::vector<bool> outOfParticlesVec;
     for (int i = 0; i < Real.NumAgents; i++)
     {
+        agentsTerminalState.push_back(false);
         outOfParticlesVec.push_back(false);
     }
     int t;
@@ -408,7 +409,6 @@ void DECEXPERIMENT::DecentralizedRun(int n)
 
     for (t = 0; t < ExpParams.NumSteps; t++)
     {
-        int observation;
         double reward;
 
         // Get joint action and observation
@@ -417,11 +417,31 @@ void DECEXPERIMENT::DecentralizedRun(int n)
         for (int i = 0; i < Real.NumAgents; i++)
         {
             MCTS* mcts = mctsVec[i];
+
+            // If Agent i is out of particles, select
+            // a SMART, LEGAL, or random action depending
+            // on Simulator Knowledge
+            if (outOfParticlesVec[i])
+            {
+                HISTORY history = mcts->GetHistory();
+
+                // int observation;
+
+                // This passes real state into simulator!
+                // SelectRandom must only use fully observable state
+                // to avoid "cheating"
+                DECROCKSAMPLE_STATE& rockstate = safe_cast<DECROCKSAMPLE_STATE&>(*state);
+                int action = Simulators[i].SelectRandom((rockstate.AgentStates[i]), history, mcts->GetStatus());
+                // history.Add(action, observation); // TODO: update the history in MCTS tree
+                jointAction.push_back(action);
+                continue;
+            }
+
             int action = mcts->SelectAction();
             jointAction.push_back(action);
         }
 
-        terminal = Real.Step(*state, jointAction, jointObservation, reward);
+        agentsTerminalState = Real.Step(*state, agentsTerminalState, jointAction, jointObservation, reward);
 
         if (SearchParams.Verbose >= 1)
         {
@@ -441,26 +461,28 @@ void DECEXPERIMENT::DecentralizedRun(int n)
         discountedReturn += reward * discount;
         discount *= Real.GetDiscount();
 
-        if (terminal)
+        // Check if all agents have reached a terminal state
+        bool allTerminal = true;
+        for (int i = 0; i < Real.NumAgents; i++)
+        {
+            allTerminal &= agentsTerminalState[i];
+        }
+
+        if (allTerminal)
         {
             if (SearchParams.Verbose >= 1)
             {
-                cout << "Terminated" << endl;
+                cout << "All agents terminated" << endl;
             }
 
             break;
         }
 
-        bool toBreak = false;
         for (int i = 0; i < Real.NumAgents; i++)
         {
             MCTS* mcts = mctsVec[i];
             outOfParticlesVec[i] = !mcts->Update(jointAction[i], jointObservation[i], reward);
-            toBreak |= outOfParticlesVec[i];
         }
-
-        if (toBreak)
-            break;
 
         if (timer.elapsed() > ExpParams.TimeOut)
         {
@@ -470,51 +492,14 @@ void DECEXPERIMENT::DecentralizedRun(int n)
         }
     }
 
-    // for (int i = 0; i < Real.NumAgents; i++)
-    // {
-    //     if (outOfParticlesVec[i])
-    //     {
-    //         cout << "Out of particles for agent " << i << ", finishing episode with SelectRandom" << endl;
-    //         HISTORY history = mctsVec[i].GetHistory();
-    //         while (++t < ExpParams.NumSteps)
-    //         {
-    //             int observation;
-    //             double reward;
-    //
-    //             // This passes real state into simulator!
-    //             // SelectRandom must only use fully observable state
-    //             // to avoid "cheating"
-    //             int action = Simulator.SelectRandom(*state, history, mcts.GetStatus());
-    //             terminal = Real.Step(*state, action, observation, reward);
-    //
-    //             Results.Reward.Add(reward);
-    //             undiscountedReturn += reward;
-    //             discountedReturn += reward * discount;
-    //             discount *= Real.GetDiscount();
-    //
-    //             if (SearchParams.Verbose >= 1)
-    //             {
-    //                 Real.DisplayAction(action, cout);
-    //                 Real.DisplayState(*state, cout);
-    //                 Real.DisplayObservation(*state, observation, cout);
-    //                 Real.DisplayReward(reward, cout);
-    //             }
-    //
-    //             if (terminal)
-    //             {
-    //                 cout << "Terminated" << endl;
-    //                 break;
-    //             }
-    //
-    //             history.Add(action, observation);
-    //         }
-    //     }
-    // }
-
     Results.Time.Add(timer.elapsed());
     Results.UndiscountedReturn.Add(undiscountedReturn);
     Results.DiscountedReturn.Add(discountedReturn);
 
+    cout << "Discounted return = " << discountedReturn
+        << ", average = " << Results.DiscountedReturn.GetMean() << endl;
+    cout << "Undiscounted return = " << undiscountedReturn
+        << ", average = " << Results.UndiscountedReturn.GetMean() << endl;
 }
 
 void EXPERIMENT::DisplayParameters()
