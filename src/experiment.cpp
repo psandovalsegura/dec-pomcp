@@ -103,7 +103,11 @@ void EXPERIMENT::Run(int n)
 
         if (terminal)
         {
-            cout << "Terminated" << endl;
+            if (SearchParams.Verbose >= 1)
+            {
+                cout << "Terminated" << endl;
+            }
+
             break;
         }
         outOfParticles = !mcts.Update(action, observation, reward);
@@ -148,7 +152,11 @@ void EXPERIMENT::Run(int n)
 
             if (terminal)
             {
-                cout << "Terminated" << endl;
+                if (SearchParams.Verbose >= 1)
+                {
+                    cout << "Terminated" << endl;
+                }
+
                 break;
             }
 
@@ -435,7 +443,11 @@ void DECEXPERIMENT::DecentralizedRun(int n)
 
         if (terminal)
         {
-            cout << "Terminated" << endl;
+            if (SearchParams.Verbose >= 1)
+            {
+                cout << "Terminated" << endl;
+            }
+
             break;
         }
 
