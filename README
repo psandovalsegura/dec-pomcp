@@ -6,20 +6,6 @@ by David Silver and Joel Veness
 
 Further decentralized extensions by Pedro Sandoval Segura
 
-## Dependencies
-### Qt 5
-1. Navigate to https://www.qt.io/download and follow instructions for building from source
-2. (Optional) Use the first lines printed from `qtdiag` to check the location of installation
-3.
-Note: I decided not to use this lib because it was hard to integrate with build system
-
-### wxWidgets
-1. Navigate to https://wiki.wxwidgets.org/Compiling_and_getting_started and follow directions
-2. Follow the section on "Testing the installation" to check that it was properly installed
-3. Don't forget to add the installed libraries to the LD_LIBRARY_PATH environement variable
-
-Note: This page https://wiki.wxwidgets.org/Autoconf helped in modifying the configure.ac file accordingly,
-and in providing the steps to regenerate Makefiles.
 
 ## How to Use
 1. Install dependencies
@@ -30,6 +16,14 @@ Typically, I run:
 ```
 ./src/pomcp --problem rocksample --size 7 --number 8 --verbose 1 --singlerun --numsimulations 10
 ```
+
+### wxWidgets
+1. Navigate to https://wiki.wxwidgets.org/Compiling_and_getting_started and follow directions
+2. Follow the section on "Testing the installation" to check that it was properly installed
+3. Don't forget to add the installed libraries to the LD_LIBRARY_PATH environement variable
+
+Note: This page https://wiki.wxwidgets.org/Autoconf helped in modifying the configure.ac file accordingly,
+and in providing the steps to regenerate Makefiles.
 
 ### Adding new files
 New files need to be added to Makefile.am so that they can be recognized. Running `make` right
