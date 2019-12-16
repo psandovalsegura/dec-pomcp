@@ -85,6 +85,8 @@ public:
         EXPERIMENT::PARAMS& expParams, MCTS::PARAMS& searchParams);
 
     void DecentralizedRun(int n);
+    void MultiDecentralizedRun();
+    void DiscountedReturn();
 
   private:
 

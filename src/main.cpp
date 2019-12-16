@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
     {
         DECROCKSAMPLE *real = new DECROCKSAMPLE(7,8,2);
         DECEXPERIMENT decexperiment(*real, outputfile, expParams, searchParams);
-        decexperiment.DecentralizedRun(0);
+        decexperiment.DiscountedReturn();
         exit(1);
     }
     else if (problem == "tag")
@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
         app->experiment = experiment;
         app->rockPos = ((ROCKSAMPLE*)real)->RockPos;
         app->OnRun();
-        
+
         return 0;
     }
 

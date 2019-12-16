@@ -372,8 +372,6 @@ void EXPERIMENT::AverageReward()
 
 void DECEXPERIMENT::DecentralizedRun(int n)
 {
-    cout << "/* In Experiment::DecentralizedRun */" << endl;
-
     boost::timer timer;
     std::vector<MCTS*> mctsVec;
 
@@ -496,10 +494,66 @@ void DECEXPERIMENT::DecentralizedRun(int n)
     Results.UndiscountedReturn.Add(undiscountedReturn);
     Results.DiscountedReturn.Add(discountedReturn);
 
-    cout << "Discounted return = " << discountedReturn
-        << ", average = " << Results.DiscountedReturn.GetMean() << endl;
-    cout << "Undiscounted return = " << undiscountedReturn
-        << ", average = " << Results.UndiscountedReturn.GetMean() << endl;
+    // cout << "Discounted return = " << discountedReturn
+    //     << ", average = " << Results.DiscountedReturn.GetMean() << endl;
+    // cout << "Undiscounted return = " << undiscountedReturn
+    //     << ", average = " << Results.UndiscountedReturn.GetMean() << endl;
+}
+
+void DECEXPERIMENT::MultiDecentralizedRun()
+{
+    cout << "Starting " << ExpParams.NumRuns << " runs with "
+            << SearchParams.NumSimulations << " simulations... " << endl;
+    for (int n = 0; n < ExpParams.NumRuns; n++)
+    {
+        DecentralizedRun(n);
+        if (Results.Time.GetTotal() > ExpParams.TimeOut)
+        {
+            cout << "Timed out after " << n << " runs in "
+                << Results.Time.GetTotal() << "seconds" << endl;
+            break;
+        }
+    }
+}
+
+void DECEXPERIMENT::DiscountedReturn()
+{
+    cout << "Main runs" << endl;
+    OutputFile << "Simulations\tRuns\tUndiscounted return\tUndiscounted error\tDiscounted return\tDiscounted error\tTime\n";
+
+    SearchParams.MaxDepth = Simulators[0].GetHorizon(ExpParams.Accuracy, ExpParams.UndiscountedHorizon);
+    ExpParams.SimSteps = Simulators[0].GetHorizon(ExpParams.Accuracy, ExpParams.UndiscountedHorizon);
+    ExpParams.NumSteps = Real.GetHorizon(ExpParams.Accuracy, ExpParams.UndiscountedHorizon);
+
+    for (int i = ExpParams.MinDoubles; i <= ExpParams.MaxDoubles; i++)
+    {
+        SearchParams.NumSimulations = 1 << i;
+        SearchParams.NumStartStates = 1 << i;
+        if (i + ExpParams.TransformDoubles >= 0)
+            SearchParams.NumTransforms = 1 << (i + ExpParams.TransformDoubles);
+        else
+            SearchParams.NumTransforms = 1;
+        SearchParams.MaxAttempts = SearchParams.NumTransforms * ExpParams.TransformAttempts;
+
+        Results.Clear();
+        MultiDecentralizedRun();
+
+        cout << "+----------------------------------------+" << endl;
+        cout << "Simulations = " << SearchParams.NumSimulations << endl
+            << "Runs = " << Results.Time.GetCount() << endl
+            << "Undiscounted return = " << Results.UndiscountedReturn.GetMean()
+            << " +- " << Results.UndiscountedReturn.GetStdErr() << endl
+            << "Discounted return = " << Results.DiscountedReturn.GetMean()
+            << " +- " << Results.DiscountedReturn.GetStdErr() << endl
+            << "Time = " << Results.Time.GetMean() << endl;
+        OutputFile << SearchParams.NumSimulations << "\t"
+            << Results.Time.GetCount() << "\t"
+            << Results.UndiscountedReturn.GetMean() << "\t"
+            << Results.UndiscountedReturn.GetStdErr() << "\t"
+            << Results.DiscountedReturn.GetMean() << "\t"
+            << Results.DiscountedReturn.GetStdErr() << "\t"
+            << Results.Time.GetMean() << endl;
+    }
 }
 
 void EXPERIMENT::DisplayParameters()
