@@ -194,7 +194,7 @@ bool DECROCKSAMPLE::Step(STATE& state, std::vector<int> jointAction,
     {
         ROCKSAMPLE agentSimulator = AgentSimulators[i];
         int action = jointAction[i]; // Action chosen by Agent i
-        int observation = E_NONE;    // To be passed by ref into Step
+        int observation;             // To be passed by ref into Step
         double currentReward = 0;    // To be passed by ref into Step
 
         ROCKSAMPLE_STATE agentState = rockstate.AgentStates[i];
@@ -294,7 +294,7 @@ void DECROCKSAMPLE::DisplayJointAction(std::vector<int> jointAction, std::ostrea
         if (action == E_SAMPLE)
             ostr << "Sample" << endl;
         if (action > E_SAMPLE)
-            ostr << "Check " << action - E_SAMPLE << endl;
+            ostr << "Check " << action - E_SAMPLE - 1 << endl;
     }
     ostr << endl;
 }
